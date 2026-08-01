@@ -1,528 +1,401 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IzyChartAnalisis - Analisis Saham AI untuk Investor Cerdas</title>
-    <meta name="description" content="Wawasan pasar berbasis Kecerdasan Buatan, lengkap dengan outlook harian untuk keputusan investasi yang lebih cerdas.">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>IzyChartAI - Analisis Saham & Sinyal Trading</title>
+<meta name="description" content="IzyChartAI: Analisa AI, grafik real-time, sinyal trading, screener 950+ saham, bandarmology, dan edukasi trading.">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0B0F1A;--bg-card:#151B2B;--bg-card2:#1A2235;
+  --aksen:#00C2FF;--aksen2:#00E0C6;--teks:#EAEDF3;--teks-muda:#A7B0C3;
+  --hijau:#00E676;--merah:#FF5252;--kuning:#FFC400;--ungu:#7C4DFF;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Segoe UI',Tahoma,sans-serif;background:var(--bg);color:var(--teks);line-height:1.55;-webkit-tap-highlight-color:transparent}
+a{color:var(--aksen);text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none}
+.container{max-width:520px;margin:0 auto;padding:0 16px 100px}
 
-    <!-- Style / CSS (untuk 1 file ini saja, biar mudah dicoba) -->
-    <style>
-        /* ====== RESET & DASAR ====== */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+/* DISCLAIMER */
+#disclaimer{position:fixed;inset:0;background:rgba(5,8,15,.97);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px}
+#disclaimer .box{background:var(--bg-card);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:24px;max-width:420px;width:100%}
+#disclaimer h2{font-size:1.3rem;margin-bottom:4px}
+#disclaimer .sub{color:var(--teks-muda);font-size:.85rem;margin-bottom:16px}
+#disclaimer h4{font-size:1rem;margin-top:14px;margin-bottom:6px;color:var(--aksen)}
+#disclaimer p{font-size:.85rem;color:var(--teks-muda);margin-bottom:10px}
+.chk{display:flex;align-items:center;gap:10px;margin:8px 0;font-size:.85rem}
+.chk input{width:18px;height:18px;accent-color:var(--aksen);flex-shrink:0}
+.btn-lanjut{width:100%;background:var(--aksen);color:#06121A;font-weight:700;padding:13px;border-radius:10px;font-size:.95rem;margin-top:16px}
+.btn-lanjut:disabled{background:#333;color:#777;cursor:not-allowed}
 
-        :root {
-            --bg: #0B0F1A;          /* latar navy gelap */
-            --bg-card: #151B2B;     /* latar kartu */
-            --aksen: #00C2FF;       /* biru neon */
-            --aksen2: #00E0C6;      /* teal neon */
-            --teks: #EAEDF3;        /* teks utama (putih) */
-            --teks-muda: #A7B0C3;   /* teks abu-abu muda */
-            --hijau: #00C853;       /* naik */
-            --merah: #FF5252;       /* turun */
-            --ungu: #9C6BFF;        /* premium */
-        }
+/* TOP BAR */
+.topbar{position:sticky;top:0;background:rgba(11,15,26,.95);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.06);z-index:50}
+.topbar .in{max-width:520px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:1.25rem;font-weight:800;background:linear-gradient(90deg,var(--aksen),var(--aksen2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.top-ico{display:flex;gap:12px;font-size:1.2rem;color:var(--teks-muda)}
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--bg);
-            color: var(--teks);
-            line-height: 1.6;
-        }
+/* PANEL */
+.panel{display:none}
+.panel.aktif{display:block}
+.section-title{font-size:1.15rem;font-weight:700;margin:18px 0 4px}
+.section-sub{color:var(--teks-muda);font-size:.82rem;margin-bottom:14px}
 
-        a { color: var(--aksen); text-decoration: none; }
-        img { max-width: 100%; }
+/* KARTU & TOMBOL */
+.card{background:var(--bg-card);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:16px;margin-bottom:12px}
+.btn-row{display:flex;gap:10px;margin:10px 0}
+.btn-pil{flex:1;padding:12px;border-radius:10px;background:var(--bg-card2);color:var(--teks);font-weight:600;font-size:.9rem;border:1px solid rgba(255,255,255,.08)}
+.btn-pil.pilih{background:var(--aksen);color:#06121A;border-color:var(--aksen)}
+.input{width:100%;padding:13px;border-radius:10px;background:var(--bg-card2);border:1px solid rgba(255,255,255,.1);color:var(--teks);font-size:1rem}
+.btn-utama{display:block;width:100%;background:linear-gradient(90deg,var(--aksen),var(--aksen2));color:#06121A;font-weight:700;padding:14px;border-radius:12px;font-size:1rem;margin:12px 0}
+.btn-kuning{background:var(--kuning);color:#06121A;font-weight:700}
 
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
+/* BOTTOM NAV */
+.botnav{position:fixed;bottom:0;left:0;right:0;background:rgba(13,18,30,.97);backdrop-filter:blur(8px);border-top:1px solid rgba(255,255,255,.08);z-index:60}
+.botnav .in{max-width:520px;margin:0 auto;display:flex;justify-content:space-around;padding:6px 0 calc(8px + env(safe-area-inset-bottom))}
+.nav-item{background:none;color:var(--teks-muda);display:flex;flex-direction:column;align-items:center;gap:3px;font-size:.68rem;padding:6px 8px;border-radius:8px;width:20%}
+.nav-item .ikon{font-size:1.3rem}
+.nav-item.aktif{color:var(--aksen)}
+.fab{position:fixed;bottom:78px;left:50%;transform:translateX(-50%);width:54px;height:54px;border-radius:50%;background:var(--kuning);color:#06121A;font-size:1.6rem;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:61;box-shadow:0 4px 20px rgba(255,196,0,.4)}
 
-        /* ====== NAVBAR / HEADER ====== */
-        header {
-            position: sticky;
-            top: 0;
-            background: rgba(11, 15, 26, 0.92);
-            backdrop-filter: blur(8px);
-            padding: 16px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-            z-index: 10;
-        }
-
-        .nav-wrap {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .logo {
-            font-size: 1.4rem;
-            font-weight: 800;
-            background: linear-gradient(90deg, var(--aksen), var(--aksen2));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            letter-spacing: -0.5px;
-        }
-
-        nav ul {
-            display: flex;
-            gap: 24px;
-            list-style: none;
-        }
-
-        nav a {
-            color: var(--teks-muda);
-            font-weight: 500;
-            transition: color .2s;
-        }
-        nav a:hover { color: var(--aksen); }
-
-        .btn-nav {
-            background: var(--aksen);
-            color: #06121A !important;
-            padding: 8px 18px;
-            border-radius: 8px;
-            font-weight: 600;
-        }
-        .btn-nav:hover { background: var(--aksen2); color: #06121A !important; }
-
-        /* Burger menu (untuk HP) */
-        #menu-toggle { display: none; font-size: 1.6rem; cursor: pointer; color: var(--teks); }
-        @media (max-width: 768px) {
-            #menu-toggle { display: block; }
-            nav ul {
-                display: none;
-                flex-direction: column;
-                gap: 14px;
-                position: absolute;
-                top: 60px; left: 0; right: 0;
-                background: var(--bg);
-                padding: 20px;
-                border-bottom: 1px solid rgba(255,255,255,0.1);
-            }
-            nav ul.open { display: flex; }
-        }
-
-        /* ====== HERO ====== */
-        .hero {
-            padding: 80px 0 60px;
-            text-align: center;
-            background:
-                radial-gradient(circle at 20% 20%, rgba(0,194,255,0.12), transparent 40%),
-                radial-gradient(circle at 80% 80%, rgba(0,224,198,0.10), transparent 40%);
-        }
-        .hero h1 {
-            font-size: 2.6rem;
-            font-weight: 800;
-            line-height: 1.2;
-            margin-bottom: 16px;
-        }
-        .hero h1 span { color: var(--aksen); }
-        .hero p {
-            font-size: 1.15rem;
-            color: var(--teks-muda);
-            max-width: 640px;
-            margin: 0 auto 28px;
-        }
-        .hero-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
-        .btn {
-            display: inline-block;
-            padding: 13px 28px;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all .2s;
-            cursor: pointer;
-            border: none;
-        }
-        .btn-primary { background: linear-gradient(90deg, var(--aksen), var(--aksen2)); color: #06121A; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,194,255,0.3); }
-        .btn-outline { background: transparent; color: var(--aksen); border: 1px solid var(--aksen); }
-        .btn-outline:hover { background: rgba(0,194,255,0.08); }
-
-        .hero-stats {
-            display: flex;
-            gap: 40px;
-            justify-content: center;
-            margin-top: 44px;
-            flex-wrap: wrap;
-        }
-        .hero-stats div { text-align: center; }
-        .hero-stats h3 { font-size: 1.8rem; color: var(--aksen2); }
-        .hero-stats p { margin: 0; font-size: .9rem; color: var(--teks-muda); }
-
-        /* ====== SECTION UMUM ====== */
-        section { padding: 70px 0; }
-        .section-title { text-align: center; margin-bottom: 40px; }
-        .section-title h2 { font-size: 2rem; margin-bottom: 10px; }
-        .section-title p { color: var(--teks-muda); max-width: 600px; margin: 0 auto; }
-        .badge {
-            display: inline-block;
-            background: rgba(0,194,255,0.12);
-            color: var(--aksen);
-            padding: 6px 16px;
-            border-radius: 50px;
-            font-size: .85rem;
-            font-weight: 600;
-            margin-bottom: 12px;
-        }
-
-        /* ====== FITUR ====== */
-        .fitur-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 24px;
-        }
-        .fitur-card {
-            background: var(--bg-card);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 16px;
-            padding: 26px;
-            transition: all .3s;
-        }
-        .fitur-card:hover { transform: translateY(-5px); border-color: var(--aksen); }
-        .fitur-card .icon { font-size: 2rem; margin-bottom: 12px; }
-        .fitur-card h3 { margin-bottom: 8px; }
-        .fitur-card p { color: var(--teks-muda); font-size: .95rem; }
-
-        /* ====== HARGA / PRICING ====== */
-        .harga-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 24px;
-            align-items: stretch;
-        }
-        .harga-card {
-            background: var(--bg-card);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 16px;
-            padding: 30px 26px;
-            text-align: center;
-            position: relative;
-        }
-        .harga-card.populer {
-            border: 2px solid var(--aksen);
-            box-shadow: 0 0 24px rgba(0,194,255,0.15);
-        }
-        .harga-card.populer::before {
-            content: "PALING LARIS";
-            position: absolute;
-            top: -14px; left: 50%;
-            transform: translateX(-50%);
-            background: var(--aksen);
-            color: #06121A;
-            font-size: .75rem;
-            font-weight: 700;
-            padding: 4px 14px;
-            border-radius: 50px;
-            letter-spacing: .5px;
-        }
-        .harga-card h3 { font-size: 1.3rem; margin-bottom: 8px; }
-        .harga-card .harga {
-            font-size: 2.2rem;
-            font-weight: 800;
-            color: var(--aksen2);
-            margin-bottom: 4px;
-        }
-        .harga-card .periode { color: var(--teks-muda); font-size: .85rem; margin-bottom: 20px; }
-        .harga-card ul { list-style: none; text-align: left; margin: 0 0 22px; }
-        .harga-card li { padding: 6px 0; font-size: .92rem; color: var(--teks-muda); }
-        .harga-card li::before { content: "✓ "; color: var(--aksen2); font-weight: 700; }
-
-        /* ====== TESTIMONI (singkat) ====== */
-        .testi-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 24px;
-        }
-        .testi-card {
-            background: var(--bg-card);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 16px;
-            padding: 24px;
-        }
-        .testi-card .avatar { color: var(--aksen); font-size: 1.4rem; }
-        .testi-card p { font-style: italic; color: var(--teks-muda); margin: 12px 0; }
-        .testi-card .nama { font-weight: 700; }
-        .testi-card .role { color: var(--teks-muda); font-size: .85rem; }
-
-        /* ====== CTA ====== */
-        .cta {
-            text-align: center;
-            background: linear-gradient(135deg, rgba(0,194,255,0.15), rgba(0,224,198,0.15));
-            border-radius: 20px;
-            padding: 50px 30px;
-        }
-        .cta h2 { font-size: 1.9rem; margin-bottom: 12px; }
-        .cta p { color: var(--teks-muda); margin-bottom: 24px; }
-
-        /* ====== FOOTER ====== */
-        footer {
-            border-top: 1px solid rgba(255,255,255,0.08);
-            padding: 40px 0 24px;
-            background: #070A12;
-        }
-        .footer-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 30px;
-            margin-bottom: 24px;
-        }
-        .footer-grid h4 { margin-bottom: 12px; color: var(--teks); }
-        .footer-grid ul { list-style: none; }
-        .footer-grid li { margin-bottom: 8px; }
-        .footer-grid a { color: var(--teks-muda); }
-        .footer-grid a:hover { color: var(--aksen); }
-        .footer-bottom {
-            text-align: center;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255,255,255,0.06);
-            color: var(--teks-muda);
-            font-size: .85rem;
-        }
-
-        /* Responsive */
-        @media (max-width: 600px) {
-            .hero h1 { font-size: 2rem; }
-            .hero-stats { gap: 20px; }
-        }
-    </style>
+/* BERBAGAI */
+.tag{display:inline-block;padding:3px 10px;border-radius:50px;font-size:.7rem;font-weight:700}
+.hijau{color:var(--hijau)}.merah{color:var(--merah)}.kuning{color:var(--kuning)}
+</style>
 </head>
 <body>
 
-    <!-- ====== HEADER / NAVBAR ====== -->
-    <header>
-        <div class="container nav-wrap">
-            <a href="#" class="logo">IzyChartAnalisis</a>
+<!-- DISCLAIMER -->
+<div id="disclaimer">
+  <div class="box">
+    <h2>Sebelum Melanjutkan</h2>
+    <p class="sub">Konten ini untuk tujuan edukasi, bukan nasihat keuangan.</p>
+    <h4>01. DATA — Akurasi Data</h4>
+    <p>Data pasar berasal dari pihak ketiga. Akurasi tidak dijamin penuh.</p>
+    <h4>02. KEPUTUSAN — Tanggung Jawab Anda</h4>
+    <p>Keputusan investasi sepenuhnya milik Anda. Konsultasikan dengan penasihat berlisensi.</p>
+    <label class="chk"><input type="checkbox" id="c1"> Konten bukan nasihat keuangan.</label>
+    <label class="chk"><input type="checkbox" id="c2"> Saya paham risiko & potensi kehilangan modal.</label>
+    <label class="chk"><input type="checkbox" id="c3"> Saya setuju Syarat & Ketentuan serta Kebijakan Privasi.</label>
+    <button class="btn-lanjut" id="btn-lanjut" disabled>Saya Mengerti dan Lanjutkan</button>
+  </div>
+</div>
 
-            <nav>
-                <ul id="nav-menu">
-                    <li><a href="#fitur">Fitur</a></li>
-                    <li><a href="#harga">Harga</a></li>
-                    <li><a href="#tentang">Tentang</a></li>
-                    <li><a href="#faq">FAQ</a></li>
-                    <li><a href="#kontak">Kontak</a></li>
-                    <li><a href="#" class="btn-nav">Daftar Gratis</a></li>
-                </ul>
-            </nav>
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="in">
+    <span class="logo">📊 IzyChartAI</span>
+    <div class="top-ico"><span>🔔</span><span>⚙️</span></div>
+  </div>
+</div>
 
-            <span id="menu-toggle">☰</span>
+<!-- PANEL BERANDA -->
+<div id="panel-beranda" class="panel aktif">
+  <div class="container">
+    <div class="card" style="background:linear-gradient(135deg,var(--bg-card),#16204a);border-color:rgba(0,194,255,.3)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <b>Analisa AI</b>
+        <span class="tag" style="background:rgba(0,230,118,.15);color:var(--hijau)">AKTIF</span>
+      </div>
+      <p style="color:var(--teks-muda);font-size:.85rem">Masukkan kode saham untuk analisis.</p>
+    </div>
+
+    <div class="section-title">Tipe Investor</div>
+    <div class="btn-row">
+      <button class="btn-pil pilih">⚡ Scalping</button>
+      <button class="btn-pil">📈 Swing</button>
+      <button class="btn-pil">⏳ Day Trading</button>
+    </div>
+
+    <div class="section-title">Cari Saham</div>
+    <input class="input" id="in-search" placeholder="Ketik kode saham, mis: BBRI / TPIA / BBCA">
+    <button class="btn-utama" id="btn-analisis">⚡ ANALISIS LENGKAP</button>
+
+    <div id="hasil-analisis" style="display:none">
+      <div class="section-title">📊 Hasil Analisis</div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div><b id="h-simbol">BBRI</b><div style="color:var(--teks-muda);font-size:.8rem">PT Bank Rakyat Indonesia Tbk</div></div>
+          <span class="tag" style="background:rgba(0,230,118,.15);color:var(--hijau)">STRONG BUY</span>
         </div>
-    </header>
-
-    <!-- ====== HERO ====== -->
-    <section class="hero">
-        <div class="container">
-            <h1>Analisis Saham AI<br>untuk <span>Investor Cerdas</span></h1>
-            <p>Wawasan pasar berbasis Kecerdasan Buatan, lengkap dengan outlook harian untuk membantu Anda mengambil keputusan investasi yang lebih cerdas.</p>
-
-            <div class="hero-btns">
-                <a href="#kontak" class="btn btn-primary">Daftar Gratis</a>
-                <a href="#fitur" class="btn btn-outline">Lihat Fitur</a>
-            </div>
-
-            <div class="hero-stats">
-                <div><h3>10K+</h3><p>Analisis Harian</p></div>
-                <div><h3>98%</h3><p>Tingkat Akurasi Model AI</p></div>
-                <div><h3>24/7</h3><p>Analisis Otomatis</p></div>
-            </div>
+        <div style="display:flex;gap:10px;margin-top:12px;font-size:.8rem">
+          <div style="flex:1;background:var(--bg-card2);padding:8px;border-radius:8px;text-align:center"><b style="color:var(--aksen)">+2,4%</b><br>Target 3 hari</div>
+          <div style="flex:1;background:var(--bg-card2);padding:8px;border-radius:8px;text-align:center"><b style="color:var(--hijau)">1.820</b><br>Entry Area</div>
+          <div style="flex:1;background:var(--bg-card2);padding:8px;border-radius:8px;text-align:center"><b style="color:var(--merah)">1.730</b><br>Stop Loss</div>
         </div>
-    </section>
+        <p style="color:var(--teks-muda);font-size:.78rem;margin-top:10px">* Hasil demo/edukasi, bukan nasihat keuangan.</p>
+      </div>
+    </div>
 
-    <!-- ====== FITUR ====== -->
-    <section id="fitur">
-        <div class="container">
-            <div class="section-title">
-                <span class="badge">FITUR UNGGULAN</span>
-                <h2>Analisis yang Anda Butuhkan</h2>
-                <p>Lengkap dengan prediksi harga, pola grafik, dan rekomendasi — semua dalam satu platform.</p>
-            </div>
+    <div class="section-title">🌙 Outlook IHSG</div>
+    <div class="card">
+      <p style="font-size:.9rem">IHSG diperkirakan <b class="hijau">menguat</b> dengan dukungan sektor perbankan. Perhatikan level resistance di 6.300.</p>
+    </div>
+  </div>
+</div>
 
-            <div class="fitur-grid">
-                <div class="fitur-card">
-                    <div class="icon">📈</div>
-                    <h3>Prediksi Harga</h3>
-                    <p>Perkiraan pergerakan harga saham berbasis model AI yang terus belajar.</p>
-                </div>
-                <div class="fitur-card">
-                    <div class="icon">📊</div>
-                    <h3>Pola Grafik</h3>
-                    <p>Deteksi otomatis pola grafik yang berpeluang menunjukkan momentum pasar.</p>
-                </div>
-                <div class="fitur-card">
-                    <div class="icon">🎯</div>
-                    <h3>Rekomendasi Saham</h3>
-                    <p>Rekomendasi portofolio yang disesuaikan dengan profil risiko Anda.</p>
-                </div>
-                <div class="fitur-card">
-                    <div class="icon">🌙</div>
-                    <h3>Outlook Market Besok</h3>
-                    <p>Analisis malam hari (19.00–22.00 WIB) untuk panduan trading esok hari.</p>
-                </div>
-                <div class="fitur-card">
-                    <div class="icon">🕒</div>
-                    <h3>Data Real-Time</h3>
-                    <p>Premium: data real-time untuk keputusan saat pasar sedang aktif.</p>
-                </div>
-                <div class="fitur-card">
-                    <div class="icon">🔔</div>
-                    <h3>Notifikasi Cerdas</h3>
-                    <p>Peringatan otomatis saat ada peluang atau perubahan penting di pasar.</p>
-                </div>
-            </div>
+<!-- PANEL GRAFIK -->
+<div id="panel-grafik" class="panel">
+  <div class="container">
+    <div class="section-title">📈 Grafik Harga & IHSG</div>
+    <p class="section-sub">Grafik real-time. Gunakan toolbar untuk timeframe & indikator teknikal.</p>
+    <div style="display:flex;gap:8px;margin-bottom:12px">
+      <input class="input" id="chart-simbol" placeholder="Kode saham / forex, mis: TPIA">
+      <button class="btn-pil" style="flex:0 0 auto;background:var(--aksen);color:#06121A;font-weight:700" id="btn-grafik">Buka</button>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden;border-radius:14px">
+      <div class="tradingview-widget-container" style="height:420px;width:100%">
+        <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
+        <div class="tradingview-widget-copyright">
+          <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank"><span style="color:#3BB3E4">TradingView</span></a>
         </div>
-    </section>
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+        {"autosize":true,"symbol":"IDX:JKSE","interval":"D","timezone":"Asia/Jakarta","theme":"dark","style":"1","locale":"id","allow_symbol_change":true,"details":true,"hotlist":true,"calendar":false,"support_host":"https://www.tradingview.com"}
+        </script>
+      </div>
+    </div>
+    <p style="color:var(--teks-muda);font-size:.78rem;margin-top:8px">💡 Indikator teknikal (RSI, MACD, dll.) tersedia di toolbar grafik.</p>
+  </div>
+</div>
 
-    <!-- ====== HARGA / PRICING ====== -->
-    <section id="harga">
-        <div class="container">
-            <div class="section-title">
-                <span class="badge">PAKET HARGA</span>
-                <h2>Pilih Paket yang Cocok</h2>
-                <p>Transparan dan terjangkau — mulai dari analisis malam hingga data real-time premium.</p>
-            </div>
+<!-- PANEL SINYAL -->
+<div id="panel-sinyal" class="panel">
+  <div class="container">
+    <div class="section-title">📡 AI Sinyal Trading</div>
+    <p class="section-sub">Sinyal saham & forex dengan ENTRY, STOP LOSS, dan TAKE PROFIT.</p>
+    <div class="btn-row">
+      <button class="btn-pil pilih">Saham</button>
+      <button class="btn-pil">Forex</button>
+      <button class="btn-pil">Crypto</button>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div><b>BBRI</b> <span class="tag" style="background:rgba(0,230,118,.15);color:var(--hijau)">BUY</span></div>
+        <span style="color:var(--teks-muda);font-size:.75rem">12m lalu</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;font-size:.8rem">
+        <div style="background:var(--bg-card2);padding:8px;border-radius:8px;text-align:center"><b style="color:var(--aksen)">ENTRY</b><br>1.725</div>
+        <div style="background:var(--bg-card2);padding:8px;border-radius:8px;text-align:center"><b style="color:var(--merah)">SL</b><br>1.700</div>
+        <div style="background:var(--bg-card2);padding:8px;border-radius:8px;text-align:center"><b style="color:var(--hijau)">TP1</b><br>1.760</div>
+      </div>
+    </div>
+    <div class="card" style="opacity:.75">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div><b>TPIA</b> <span class="tag" style="background:rgba(0,194,255,.15);color:var(--aksen)">SELL</span></div>
+        <span style="color:var(--teks-muda);font-size:.75rem">45m lalu</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;font-size:.8rem">
+        <div style="background:var(--bg-card2);padding:8px;border-radius:8px;text-align:center"><b style="color:var(--aksen)">ENTRY</b><br>7.400</div>
+        <div style="background:var(--bg-card2);padding:8px;border-radius:8px;text-align:center"><b style="color:var(--merah)">SL</b><br>7.500</div>
+        <div style="background:var(--bg-card2);padding:8px;border-radius:8px;text-align:center"><b style="color:var(--hijau)">TP1</b><br>7.100</div>
+      </div>
+    </div>
+    <div class="card" style="text-align:center;border-color:rgba(255,196,0,.3)">
+      <p style="color:var(--teks-muda);font-size:.85rem;margin-bottom:10px">Sinyal XAUUSD, EURUSD & lainnya khusus anggota.</p>
+      <button class="btn-pil btn-kuning" style="width:100%">⭐ Upgrade Premium</button>
+    </div>
+  </div>
+</div>
 
-            <div class="harga-grid">
-                <!-- Paket Gratis -->
-                <div class="harga-card">
-                    <h3>Gratis</h3>
-                    <div class="harga">Rp 0</div>
-                    <div class="periode">selamanya</div>
-                    <ul>
-                        <li>Analisis malam (delayed 15 menit)</li>
-                        <li>Outlook harian</li>
-                        <li>Pola grafik dasar</li>
-                        <li>Notifikasi standar</li>
-                    </ul>
-                    <a href="#kontak" class="btn btn-outline">Mulai Gratis</a>
-                </div>
+<!-- PANEL SCREENER -->
+<div id="panel-screener" class="panel">
+  <div class="container">
+    <div class="section-title">🔍 Screener Saham</div>
+    <p class="section-sub">Pencarian 950+ saham dalam hitungan menit.</p>
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      <input class="input" id="scr-cari" placeholder="Cari nama / kode saham...">
+      <button class="btn-pil" style="flex:0 0 auto;background:var(--aksen);color:#06121A;font-weight:700" id="btn-cari">Cari</button>
+    </div>
+    <div class="btn-row" style="flex-wrap:wrap">
+      <button class="btn-pil pilih">Teknikal</button>
+      <button class="btn-pil">Fundamental</button>
+      <button class="btn-pil">Fear & Greed</button>
+      <button class="btn-pil">Price</button>
+    </div>
+    <div class="card" style="font-size:.9rem">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <b>EMA Proximity</b>
+        <span class="tag" style="background:var(--bg-card2);color:var(--teks-muda)">Disabled</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
+        <b>Price Pattern</b>
+        <button class="btn-pil" style="flex:0 0 auto;padding:6px 12px;font-size:.8rem">EMA 20 Bounce ▾</button>
+      </div>
+    </div>
+    <div class="section-title" style="margin-top:18px">Hasil Pencarian</div>
+    <div id="daftar-saham"></div>
+  </div>
+</div>
 
-                <!-- Paket Pro (populer) -->
-                <div class="harga-card populer">
-                    <h3>Pro</h3>
-                    <div class="harga">Rp 45.000</div>
-                    <div class="periode">/ bulan (Rp 109.000 / 3 bulan)</div>
-                    <ul>
-                        <li>Semua fitur Gratis</li>
-                        <li>Prediksi harga detail</li>
-                        <li>Rekomendasi saham harian</li>
-                        <li>Data delayed 15 menit</li>
-                        <li>Support prioritas</li>
-                    </ul>
-                    <a href="#kontak" class="btn btn-primary">Pilih Pro</a>
-                </div>
+<!-- PANEL BANDAR -->
+<div id="panel-bandar" class="panel">
+  <div class="container">
+    <div class="section-title">🏦 Bandarmology</div>
+    <p class="section-sub">Analisis aktivitas broker institusi, asing & ritel.</p>
+    <div class="btn-row" style="flex-wrap:wrap">
+      <button class="btn-pil">Accum</button>
+      <button class="btn-pil">Foreign Net</button>
+      <button class="btn-pil">Lapkeu</button>
+      <button class="btn-pil">HAKA/HAKI</button>
+      <button class="btn-pil">Konglo</button>
+      <button class="btn-pil">Sektor</button>
+      <button class="btn-pil">Usaha</button>
+      <button class="btn-pil">Insider</button>
+      <button class="btn-pil pilih">Chart</button>
+      <button class="btn-pil">Al Bandar</button>
+    </div>
+    <div class="card" style="text-align:center;padding:30px 16px;border-color:rgba(255,196,0,.3)">
+      <div style="font-size:2.5rem;margin-bottom:10px">🔒</div>
+      <b>Belum Berlangganan</b>
+      <p style="color:var(--teks-muda);font-size:.85rem;margin:8px 0 14px">Fitur Bandarmology hanya tersedia untuk pengguna premium.</p>
+      <button class="btn-pil btn-kuning" style="width:100%">⭐ Upgrade Premium</button>
+    </div>
+  </div>
+</div>
 
-                <!-- Paket Premium -->
-                <div class="harga-card">
-                    <h3>Premium</h3>
-                    <div class="harga">Rp 199.000</div>
-                    <div class="periode">/ bulan (Rp 899.000 / 6 bulan)</div>
-                    <ul>
-                        <li>Semua fitur Pro</li>
-                        <li>Data Real-Time</li>
-                        <li>Alert perdagangan live</li>
-                        <li>Konsultasi portofolio 1-on-1</li>
-                        <li>Fitur analisis eksklusif</li>
-                    </ul>
-                    <a href="#kontak" class="btn btn-outline">Pilih Premium</a>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- PANEL LAINNYA (sudah ada menu Bandar/Edu/Chat) -->
+<div id="panel-lainnya" class="panel">
+  <div class="container">
+    <div class="section-title">☰ Lainnya</div>
+    <p class="section-sub">Akses semua alat Anda di satu tempat.</p>
+    <button class="btn-pil btn-kuning" style="width:100%;margin-bottom:14px">⭐ Upgrade Premium</button>
 
-    <!-- ====== TESTIMONI ====== -->
-    <section id="tentang">
-        <div class="container">
-            <div class="section-title">
-                <span class="badge">KATA MEREKA</span>
-                <h2>Dipercaya Investor Indonesia</h2>
-            </div>
+    <div class="section-title">FITUR</div>
+    <div class="card" style="display:flex;justify-content:space-between;align-items:center;cursor:pointer" onclick="bukaPanel('bandar')"><span>🏦 Bandarmology</span><span style="color:var(--teks-muda)">›</span></div>
+    <div class="card" style="display:flex;justify-content:space-between;align-items:center;cursor:pointer" onclick="bukaPanel('edu')"><span>🎓 Edu — Belajar Trading</span><span style="color:var(--teks-muda)">›</span></div>
+    <div class="card" style="display:flex;justify-content:space-between;align-items:center;cursor:pointer" onclick="bukaPanel('chat')"><span>🤖 Chat AI</span><span style="color:var(--teks-muda)">›</span></div>
 
-            <div class="testi-grid">
-                <div class="testi-card">
-                    <div class="avatar">👤</div>
-                    <p>"Outlook hariannya sangat membantu saya memutuskan posisi sebelum pasar buka."</p>
-                    <div class="nama">Andi P.</div>
-                    <div class="role">Investor jangka menengah</div>
-                </div>
-                <div class="testi-card">
-                    <div class="avatar">👩‍💼</div>
-                    <p>"Harga terjangkau dan analisisnya mudah dipahami, cocok untuk pemula seperti saya."</p>
-                    <div class="nama">Sari W.</div>
-                    <div class="role">Pengguna Pro</div>
-                </div>
-                <div class="testi-card">
-                    <div class="avatar">👨‍💻</div>
-                    <p>"Data real-time di paket Premium terasa akurat dan cepat. Sangat membantu day trading."</p>
-                    <div class="nama">Rizky A.</div>
-                    <div class="role">Pengguna Premium</div>
-                </div>
-            </div>
-        </div>
-    </section>
+    <div class="section-title">ALAT</div>
+    <div class="card" style="display:flex;justify-content:space-between;align-items:center;cursor:pointer"><span>🕐 Riwayat Analisis</span><span style="color:var(--teks-muda)">›</span></div>
+    <div class="card" style="display:flex;justify-content:space-between;align-items:center;cursor:pointer"><span>🔔 Peringatan Harga Saya</span><span style="color:var(--teks-muda)">›</span></div>
+    <div class="card" style="display:flex;justify-content:space-between;align-items:center"><span>📈 Harga Langsung</span><span class="tag" style="background:var(--bg-card2);color:var(--teks-muda)" id="lbl-hls">Off</span></div>
+    <div class="section-title">AKUN</div>
+    <div class="card" style="display:flex;justify-content:space-between;align-items:center;cursor:pointer"><span>⚙️ Pengaturan</span><span style="color:var(--teks-muda)">›</span></div>
+    <div class="section-title">COMMUNITY</div>
+    <button class="btn-pil" style="width:100%;background:#25D366;color:#06121A;font-weight:700">💬 Join WhatsApp Community</button>
+  </div>
+</div>
 
-    <!-- ====== CTA ====== -->
-    <section>
-        <div class="container">
-            <div class="cta">
-                <h2>Mulai Investasi Lebih Cerdas Sekarang</h2>
-                <p>Gabung dengan ribuan investor yang mempercayakan analisis mereka pada AI.</p>
-                <a href="#kontak" class="btn btn-primary">Daftar Gratis</a>
-            </div>
-        </div>
-    </section>
+<!-- PANEL EDU -->
+<div id="panel-edu" class="panel">
+  <div class="container">
+    <div class="section-title">🎓 Edu — Belajar Trading</div>
+    <p class="section-sub">15 Pelajaran • 7 Kategori • Semua Level</p>
+    <div class="card" style="display:flex;justify-content:space-between;align-items:center;cursor:pointer"><div><b>📐 Technical Analysis Basics</b><div style="color:var(--teks-muda);font-size:.8rem">6 pelajaran</div></div><span style="color:var(--teks-muda)">›</span></div>
+    <div class="card" style="display:flex;justify-content:space-between;align-items:center;cursor:pointer"><div><b>📊 Chart Reading</b><div style="color:var(--teks-muda);font-size:.8rem">3 pelajaran</div></div><span style="color:var(--teks-muda)">›</span></div>
+    <div class="card" style="display:flex;justify-content:space-between;align-items:center;cursor:pointer"><div><b>📉 Technical Indicators</b><div style="color:var(--teks-muda);font-size:.8rem">4 pelajaran</div></div><span style="color:var(--teks-muda)">›</span></div>
+    <div class="card" style="display:flex;justify-content:space-between;align-items:center;cursor:pointer"><div><b>🛡️ Risk Management</b><div style="color:var(--teks-muda);font-size:.8rem">2 pelajaran</div></div><span style="color:var(--teks-muda)">›</span></div>
+  </div>
+</div>
 
-    <!-- ====== FOOTER ====== -->
-    <footer>
-        <div class="container">
-            <div class="footer-grid">
-                <div>
-                    <h4>IzyChartAnalisis</h4>
-                    <p style="color:var(--teks-muda)">Platform analisis saham AI untuk investor Indonesia.</p>
-                </div>
-                <div>
-                    <h4>Menu</h4>
-                    <ul>
-                        <li><a href="#fitur">Fitur</a></li>
-                        <li><a href="#harga">Harga</a></li>
-                        <li><a href="#tentang">Tentang</a></li>
-                        <li><a href="#faq">FAQ</a></li>
-                        <li><a href="#kontak">Kontak</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4>Kontak</h4>
-                    <ul>
-                        <li><a href="#">WhatsApp</a></li>
-                        <li><a href="#">Instagram</a></li>
-                        <li><a href="#">TikTok</a></li>
-                        <li><a href="#">YouTube</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4>Legal</h4>
-                    <ul>
-                        <li><a href="#">Kebijakan Privasi</a></li>
-                        <li><a href="#">Syarat & Ketentuan</a></li>
-                        <li><a href="#">Disclaimer</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                © 2026 IzyChartAnalisis. Semua hak dilindungi. Analisis bukan jaminan keuntungan.
-            </div>
-        </div>
-    </footer>
+<!-- PANEL CHAT AI -->
+<div id="panel-chat" class="panel">
+  <div class="container">
+    <div class="section-title">🤖 Chat AI</div>
+    <p class="section-sub">Tanya asisten trading tentang setup, risiko, atau level.</p>
+    <div class="card" style="background:var(--bg-card2)">
+      <b style="color:var(--aksen)">Asisten Trading</b>
+      <p style="font-size:.9rem;margin-top:6px">Hi! Saya asisten trading pro. Tanyakan setup, risiko, atau level harga kepada saya.</p>
+    </div>
+    <div style="display:flex;gap:8px;position:fixed;bottom:70px;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:488px;z-index:62">
+      <input class="input" id="chat-input" placeholder="Tanya sesuatu...">
+      <button class="btn-pil" style="flex:0 0 auto;background:var(--aksen);color:#06121A;font-weight:700" id="btn-kirim">➤</button>
+    </div>
+    <div id="chat-area" style="padding-bottom:70px"></div>
+  </div>
+</div>
 
-    <!-- ====== JAVASCRIPT (menu HP) ====== -->
-    <script>
-        // Toggle menu saat tombol burger diklik (di layar HP)
-        document.getElementById('menu-toggle').addEventListener('click', function () {
-            document.getElementById('nav-menu').classList.toggle('open');
-        });
-    </script>
+<!-- BOTTOM NAV -->
+<div class="fab">+</div>
+<div class="botnav">
+  <div class="in">
+    <button class="nav-item aktif" data-panel="beranda"><span class="ikon">🏠</span>Beranda</button>
+    <button class="nav-item" data-panel="grafik"><span class="ikon">📈</span>Grafik</button>
+    <button class="nav-item" data-panel="sinyal"><span class="ikon">📡</span>Sinyal</button>
+    <button class="nav-item" data-panel="screener"><span class="ikon">🔍</span>Screener</button>
+    <button class="nav-item" data-panel="lainnya"><span class="ikon">☰</span>Lainnya</button>
+  </div>
+</div>
+
+<script>
+// DISCLAIMER
+const c1=document.getElementById('c1'),c2=document.getElementById('c2'),c3=document.getElementById('c3'),bL=document.getElementById('btn-lanjut');
+function cek(){bL.disabled=!(c1.checked&&c2.checked&&c3.checked)}
+[c1,c2,c3].forEach(c=>c.addEventListener('change',cek));
+bL.addEventListener('click',()=>document.getElementById('disclaimer').style.display='none');
+
+// NAVIGASI BOTTOM
+document.querySelectorAll('.nav-item').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('aktif'));
+    document.querySelectorAll('.panel').forEach(x=>x.classList.remove('aktif'));
+    btn.classList.add('aktif');
+    document.getElementById('panel-'+btn.dataset.panel).classList.add('aktif');
+    window.scrollTo(0,0);
+  });
+});
+
+// BUKA PANEL DARI MENU "LAINNYA" (Bandar, Edu, Chat)
+function bukaPanel(nama){
+  document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('aktif'));
+  document.querySelectorAll('.panel').forEach(x=>x.classList.remove('aktif'));
+  const tombol=document.querySelector('.nav-item[data-panel="lainnya"]');
+  if(tombol)tombol.classList.add('aktif');
+  document.getElementById('panel-'+nama).classList.add('aktif');
+  window.scrollTo(0,0);
+}
+
+// ANALISIS DEMO
+document.getElementById('btn-analisis').addEventListener('click',()=>{
+  const v=document.getElementById('in-search').value.trim().toUpperCase()||'BBRI';
+  document.getElementById('h-simbol').textContent=v;
+  document.getElementById('hasil-analisis').style.display='block';
+});
+
+// DATA SAHAM SCREENER
+const daftar=[['BBRI','Bank Rakyat Indonesia',1.725,'BUY'],['BBCA','Bank Central Asia',9.900,'BUY'],['BMRI','Bank Mandiri',7.350,'BUY'],['TLKM','Telkom Indonesia',3.410,'BUY'],['ASII','Astra International',5.175,'HOLD'],['TPIA','Chandra Asri',6.875,'SELL'],['GOTO','GoTo Gojek',95,'HOLD'],['BBNI','Bank Negara Indonesia',5.800,'BUY'],['MYOR','Mayora Indah',2.380,'BUY'],['ICBP','Indofood CBP',11.200,'HOLD'],['KLBF','Kalbe Farma',1.650,'BUY'],['UNVR','Unilever Indonesia',2.900,'BUY'],['ADRO','Alamtri Resources',2.260,'BUY'],['PGAS','Gas Negara',1.390,'HOLD'],['PTBA','Bukit Asam',2.850,'SELL']];
+function var_set(key){return getComputedStyle(document.documentElement).getPropertyValue('--'+key).trim();}
+function tampilSaham(filter){
+  const box=document.getElementById('daftar-saham');
+  const q=(filter||'').toUpperCase();
+  const hasil=daftar.filter(s=>s[0].includes(q)||s[1].toUpperCase().includes(q));
+  if(hasil.length===0){box.innerHTML='<div class="card" style="color:var(--teks-muda)">Tidak ditemukan.</div>';return;}
+  box.innerHTML='';
+  hasil.forEach(s=>{
+    const warna=s[3]==='BUY'?var_set('hijau'):s[3]==='SELL'?var_set('merah'):var_set('kuning');
+    const el=document.createElement('div');
+    el.className='card';el.style.cursor='pointer';
+    el.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><b>'+s[0]+'</b><span style="color:'+warna+';font-weight:700">'+s[3]+'</span></div><div style="color:var(--teks-muda);font-size:.8rem">'+s[1]+' • '+s[2]+'</div>';
+    box.appendChild(el);
+  });
+}
+document.getElementById('btn-cari').addEventListener('click',()=>tampilSaham(document.getElementById('scr-cari').value));
+document.getElementById('scr-cari').addEventListener('keyup',e=>{if(e.key==='Enter')tampilSaham(e.target.value);});
+tampilSaham('');
+
+// CHAT AI
+document.getElementById('btn-kirim').addEventListener('click',kirim);
+document.getElementById('chat-input').addEventListener('keyup',e=>{if(e.key==='Enter')kirim();});
+function kirim(){
+  const inp=document.getElementById('chat-input'),v=inp.value.trim();
+  if(!v)return;
+  const area=document.getElementById('chat-area');
+  area.innerHTML+='<div class="card" style="margin-left:30px;background:var(--bg-card2)"><b>Anda</b><p style="font-size:.9rem">'+v+'</p></div>';
+  area.innerHTML+='<div class="card" style="margin-right:30px"><b style="color:var(--aksen)">Asisten</b><p style="font-size:.9rem">Analisis untuk <b>'+v.toUpperCase()+'</b>: tren cenderung menguat. Pertimbangkan manajemen risiko (max 2% per posisi).</p></div>';
+  inp.value='';area.scrollTop=area.scrollHeight;
+}
+
+// GRAFIK GANTI SIMBOL
+document.getElementById('btn-grafik').addEventListener('click',()=>{
+  const s=document.getElementById('chart-simbol').value.trim().toUpperCase();
+  alert('Simbol '+ (s||'JKSE') +' — pada versi penuh, grafik akan memuat '+ (s?('IDX:'+s):'IHSG') +'.');
+});
+
+// HARGA LANGSUNG TOGGLE
+let hls=false;
+document.getElementById('lbl-hls').addEventListener('click',function(){hls=!hls;this.textContent=hls?'On':'Off';});
+</script>
 
 </body>
 </html>
