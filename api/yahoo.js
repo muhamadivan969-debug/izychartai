@@ -1,52 +1,67 @@
 const https = require('https');
 
-const YAHOO_HOST = 'query1.finance.yahoo.com';
-const USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
-const ACCEPT = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9';
-const ACCEPT_LANG = 'en-US,en;q=0.9';
-const COOKIE = 'A3=d=AQABBJR7nGgCEBUZ9o4pP4e0xSJ7BwN2j2EFEgEBAQHhbo0V3F1xZxYV3gDv2WzC97JzY0U2jYzzyykYqNqbJP2bNn4H9lPRCC_kJQHBYyQYkLhnVdMCnQ7NUV6BCN5HUJ1Qx_l3VBO0SfXONo0NsR1yTU3sO3OjSlxNRB%3d%3d';
+// Host cadangan
+const HOSTS = ['query1.finance.yahoo.com', 'query2.finance.yahoo.com'];
+const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
 
-function doRequest(path) {
+function request(host, path, raw) {
   return new Promise((resolve, reject) => {
     const req = https.request({
-      host: YAHOO_HOST,
+      host: host,
       path: path,
       method: 'GET',
       headers: {
-        'User-Agent': USER_AGENT,
-        'Accept': ACCEPT,
-        'Accept-Language': ACCEPT_LANG,
-        'Cookie': COOKIE,
-        'Connection': 'keep-alive',
-        'Upgrade-Insecure-Requests': '1'
+        'User-Agent': UA,
+        'Accept': raw ? 'application/json, text/plain, */*' : '*/*',
+        'Accept-Language': 'en-US,en;q=0.9'
       }
     }, (res) => {
       let d = '';
       res.on('data', c => d += c);
-      res.on('end', () => resolve(d));
+      res.on('end', () => resolve({ status: res.statusCode, body: d }));
     });
     req.on('error', reject);
+    req.setTimeout(8000, () => { req.destroy(new Error('timeout')); });
     req.end();
   });
+}
+
+// Ambil crumb dari endpoint konsumsi
+async function getCrumb() {
+  try {
+    const r = await request(HOSTS[0], '/v1/test/getcrumb');
+    return r.body && r.body.length < 200 ? r.body : '';
+  } catch (e) { return ''; }
 }
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Headers', '*');
   res.setHeader('Content-Type', 'application/json');
-
   if (req.method === 'OPTIONS') { res.status(200).end(); return; }
 
   const symbol = (req.query.symbol || 'BBRI.JK').toUpperCase();
   const type = req.query.type || 'quote';
 
   try {
+    let result = null;
+
     if (type === 'price') {
-      const r = await doRequest('/v8/finance/chart/' + symbol + '?interval=1d&range=1d');
-      res.status(200).send(r);
+      // Coba semua host sampai ada yang berhasil (v8 chart)
+      for (const host of HOSTS) {
+        result = await request(host, '/v8/finance/chart/' + symbol + '?interval=1d&range=1d', true);
+        if (result.status === 200) break;
+      }
+      res.status(200).send(result.body);
     } else {
-      const r = await doRequest('/v7/finance/quote?symbols=' + symbol + '&crumb=');
-      res.status(200).send(r);
+      // Coba v7 quote + crumb
+      const crumb = await getCrumb();
+      const crumbPart = crumb ? '&crumb=' + encodeURIComponent(crumb) : '';
+      for (const host of HOSTS) {
+        result = await request(host, '/v7/finance/quote?symbols=' + symbol + crumbPart, true);
+        if (result.status === 200) break;
+      }
+      res.status(200).send(result.body);
     }
   } catch (e) {
     res.status(502).json({ error: 'Gagal mengambil data', detail: String(e) });
