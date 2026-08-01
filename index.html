@@ -1,492 +1,528 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Izy Analyst AI - Prediksi & Analisa Saham, Forex, Crypto</title>
-<style>
-  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-  body {
-    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
-    background:#070D1F; color:#E6EDFF; line-height:1.5; min-height:100vh;
-  }
-  a { text-decoration:none; color:inherit; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IzyChartAnalisis - Analisis Saham AI untuk Investor Cerdas</title>
+    <meta name="description" content="Wawasan pasar berbasis Kecerdasan Buatan, lengkap dengan outlook harian untuk keputusan investasi yang lebih cerdas.">
 
-  /* ===== LANDING PAGE ===== */
-  .landing { min-height:100vh; background:
-    radial-gradient(1000px 600px at 80% -10%, rgba(30,90,248,.25), transparent 60%),
-    radial-gradient(800px 500px at 0% 100%, rgba(13,189,139,.15), transparent 55%),
-    #070D1F; padding-bottom:40px; }
-  .nav { display:flex; align-items:center; justify-content:space-between; padding:18px 20px; max-width:1100px; margin:0 auto; }
-  .brand { display:flex; align-items:center; gap:10px; }
-  .brand-icon { width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;
-    background:linear-gradient(135deg,#1E5AF8,#0DBD8B); font-size:22px; box-shadow:0 6px 18px rgba(30,90,248,.4); }
-  .brand b { font-size:18px; }
-  .brand small { display:block; font-size:10px; color:#8FA3C8; font-weight:400; }
-  .nav-menu { display:flex; gap:20px; align-items:center; font-size:14px; color:#B8C6EA; }
-  .nav-menu a:hover { color:#fff; }
-  .btn-outline { border:1px solid #2E3A6E; padding:8px 18px; border-radius:20px; }
-  .btn-solid { background:linear-gradient(135deg,#1E5AF8,#2E6BFF); padding:8px 18px; border-radius:20px; font-weight:600; color:#fff; }
+    <!-- Style / CSS (untuk 1 file ini saja, biar mudah dicoba) -->
+    <style>
+        /* ====== RESET & DASAR ====== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  .hero { max-width:1100px; margin:0 auto; padding:50px 20px; display:grid; grid-template-columns:1.1fr 1fr; gap:40px; align-items:center; }
-  .hero h1 { font-size:38px; line-height:1.15; margin-bottom:14px; }
-  .hero h1 span { background:linear-gradient(90deg,#1E5AF8,#0DBD8B); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-  .hero p { color:#A9BAE0; font-size:16px; margin-bottom:24px; max-width:480px; }
-  .hero-btn { display:inline-block; background:linear-gradient(135deg,#1E5AF8,#0DBD8B); color:#fff; font-weight:700; padding:14px 30px; border-radius:30px; box-shadow:0 10px 30px rgba(30,90,248,.4); }
-  .hero-stats { display:flex; gap:30px; margin-top:34px; }
-  .hero-stats div b { font-size:24px; display:block; }
-  .hero-stats div span { font-size:12px; color:#8FA3C8; }
+        :root {
+            --bg: #0B0F1A;          /* latar navy gelap */
+            --bg-card: #151B2B;     /* latar kartu */
+            --aksen: #00C2FF;       /* biru neon */
+            --aksen2: #00E0C6;      /* teal neon */
+            --teks: #EAEDF3;        /* teks utama (putih) */
+            --teks-muda: #A7B0C3;   /* teks abu-abu muda */
+            --hijau: #00C853;       /* naik */
+            --merah: #FF5252;       /* turun */
+            --ungu: #9C6BFF;        /* premium */
+        }
 
-  .mockup { border-radius:14px; overflow:hidden; border:1px solid rgba(90,120,255,.2); box-shadow:0 30px 60px rgba(0,0,0,.6); background:#0a142e; }
-  .mock-top { padding:10px 14px; display:flex; gap:6px; align-items:center; border-bottom:1px solid #1E2B5E; }
-  .mock-top i { width:10px;height:10px;border-radius:50%;display:inline-block; }
-  .mock-top .r{background:#EA3943}.mock-top .y{background:#F4B942}.mock-top .g{background:#16C784}
-  .mock-top .url { margin-left:10px; font-size:11px; color:#6c7da6; background:#0F1B3A; padding:3px 12px; border-radius:8px; flex:1; }
-  .mock-body { padding:16px; }
-  .m-row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid rgba(90,120,255,.08); font-size:13px; }
-  .m-tag { font-size:10px; padding:2px 8px; border-radius:10px; font-weight:700; }
-  .m-tag.buy { background:rgba(22,199,132,.2); color:#16C784; }
-  .m-tag.sell { background:rgba(234,57,67,.2); color:#EA3943; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--teks);
+            line-height: 1.6;
+        }
 
-  .features { max-width:1100px; margin:40px auto; padding:0 20px; text-align:center; }
-  .section-title { font-size:30px; margin-bottom:8px; }
-  .section-sub { color:#8FA3C8; margin-bottom:36px; }
-  .feat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
-  .feat-card { background:rgba(17,29,63,.6); border:1px solid rgba(90,120,255,.16); border-radius:18px; padding:26px 20px; text-align:left; }
-  .feat-icon { width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:14px;
-    background:linear-gradient(135deg,rgba(30,90,248,.2),rgba(13,189,139,.2)); }
-  .feat-card h3 { margin-bottom:8px; font-size:16px; }
-  .feat-card p { color:#A9BAE0; font-size:13px; }
+        a { color: var(--aksen); text-decoration: none; }
+        img { max-width: 100%; }
 
-  /* ===== DASHBOARD ===== */
-  .dash { display:flex; min-height:100vh; display:none; }
-  .sidebar { width:76px; background:#0a1330; border-right:1px solid #1E2B5E; display:flex; flex-direction:column; align-items:center; padding:16px 0; position:sticky; top:0; height:100vh; }
-  .side-logo { width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#1E5AF8,#0DBD8B); display:flex;align-items:center;justify-content:center;font-size:22px; margin-bottom:24px; }
-  .side-item { width:48px;height:48px;border-radius:12px; display:flex;align-items:center;justify-content:center; font-size:20px; color:#7c8fb5; margin-bottom:8px; cursor:pointer; }
-  .side-item.aktif { background:linear-gradient(135deg,#1E5AF8,#0DBD8B); color:#fff; }
-  .side-item span { font-size:9px; display:block; }
-  .main-area { flex:1; padding:18px; overflow-y:auto; }
-  .dash-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
-  .dash-header h2 { font-size:20px; }
-  .dash-header small { color:#8FA3C8; }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
 
-  .sig-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:18px; }
-  .sig-card { background:rgba(17,29,63,.6); border:1px solid rgba(90,120,255,.16); border-radius:14px; padding:16px; text-align:center; }
-  .sig-card b { font-size:26px; display:block; }
-  .sig-card span { font-size:11px; color:#8FA3C8; }
-  .sig-card.buy-color b{color:#16C784} .sig-card.sell-color b{color:#EA3943} .sig-card.hold-color b{color:#F4B942}
+        /* ====== NAVBAR / HEADER ====== */
+        header {
+            position: sticky;
+            top: 0;
+            background: rgba(11, 15, 26, 0.92);
+            backdrop-filter: blur(8px);
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            z-index: 10;
+        }
 
-  .tabs { display:flex; gap:8px; margin-bottom:14px; }
-  .tab-btn { background:#0F1B3A; border:1px solid #1E2B5E; color:#8FA3C8; padding:9px 16px; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; }
-  .tab-btn.aktif { background:linear-gradient(135deg,#1E5AF8,#2E6BFF); color:#fff; }
+        .nav-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
 
-  .panel { background:rgba(17,29,63,.6); border:1px solid rgba(90,120,255,.16); border-radius:16px; padding:16px; margin-bottom:16px; }
-  .panel h3 { font-size:12px; color:#8FA3C8; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; display:flex; justify-content:space-between; }
-  .asset-row { display:flex; justify-content:space-between; align-items:center; padding:11px 6px; border-bottom:1px solid rgba(90,120,255,.08); }
-  .asset-row:last-child{ border-bottom:none; }
-  .asset-name { font-weight:600; font-size:14px; }
-  .asset-sub { font-size:11px; color:#6c7da6; }
-  .asset-price { text-align:right; }
-  .asset-price b { font-size:14px; display:block; }
-  .up { color:#16C784; } .down { color:#EA3943; }
-  .pill { font-size:10px; padding:2px 8px; border-radius:10px; font-weight:700; }
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--aksen), var(--aksen2));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+        }
 
-  .foot { padding:14px; text-align:center; font-size:11px; color:#6c7da6; }
+        nav ul {
+            display: flex;
+            gap: 24px;
+            list-style: none;
+        }
 
-  @media(max-width:720px){
-    .hero { grid-template-columns:1fr; padding:30px 20px; text-align:center; }
-    .hero p { margin-left:auto; margin-right:auto; }
-    .hero-stats { justify-content:center; }
-    .nav-menu a { display:none; }
-    .nav-menu .btn-solid { display:block; }
-    .feat-grid { grid-template-columns:1fr; }
-    .sig-grid { grid-template-columns:repeat(2,1fr); }
-    .sidebar { width:60px; }
-    .side-item { width:44px; height:44px; }
-  }
-</style>
+        nav a {
+            color: var(--teks-muda);
+            font-weight: 500;
+            transition: color .2s;
+        }
+        nav a:hover { color: var(--aksen); }
+
+        .btn-nav {
+            background: var(--aksen);
+            color: #06121A !important;
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        .btn-nav:hover { background: var(--aksen2); color: #06121A !important; }
+
+        /* Burger menu (untuk HP) */
+        #menu-toggle { display: none; font-size: 1.6rem; cursor: pointer; color: var(--teks); }
+        @media (max-width: 768px) {
+            #menu-toggle { display: block; }
+            nav ul {
+                display: none;
+                flex-direction: column;
+                gap: 14px;
+                position: absolute;
+                top: 60px; left: 0; right: 0;
+                background: var(--bg);
+                padding: 20px;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+            }
+            nav ul.open { display: flex; }
+        }
+
+        /* ====== HERO ====== */
+        .hero {
+            padding: 80px 0 60px;
+            text-align: center;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(0,194,255,0.12), transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(0,224,198,0.10), transparent 40%);
+        }
+        .hero h1 {
+            font-size: 2.6rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 16px;
+        }
+        .hero h1 span { color: var(--aksen); }
+        .hero p {
+            font-size: 1.15rem;
+            color: var(--teks-muda);
+            max-width: 640px;
+            margin: 0 auto 28px;
+        }
+        .hero-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+        .btn {
+            display: inline-block;
+            padding: 13px 28px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all .2s;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-primary { background: linear-gradient(90deg, var(--aksen), var(--aksen2)); color: #06121A; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,194,255,0.3); }
+        .btn-outline { background: transparent; color: var(--aksen); border: 1px solid var(--aksen); }
+        .btn-outline:hover { background: rgba(0,194,255,0.08); }
+
+        .hero-stats {
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+            margin-top: 44px;
+            flex-wrap: wrap;
+        }
+        .hero-stats div { text-align: center; }
+        .hero-stats h3 { font-size: 1.8rem; color: var(--aksen2); }
+        .hero-stats p { margin: 0; font-size: .9rem; color: var(--teks-muda); }
+
+        /* ====== SECTION UMUM ====== */
+        section { padding: 70px 0; }
+        .section-title { text-align: center; margin-bottom: 40px; }
+        .section-title h2 { font-size: 2rem; margin-bottom: 10px; }
+        .section-title p { color: var(--teks-muda); max-width: 600px; margin: 0 auto; }
+        .badge {
+            display: inline-block;
+            background: rgba(0,194,255,0.12);
+            color: var(--aksen);
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: .85rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        /* ====== FITUR ====== */
+        .fitur-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+        }
+        .fitur-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            padding: 26px;
+            transition: all .3s;
+        }
+        .fitur-card:hover { transform: translateY(-5px); border-color: var(--aksen); }
+        .fitur-card .icon { font-size: 2rem; margin-bottom: 12px; }
+        .fitur-card h3 { margin-bottom: 8px; }
+        .fitur-card p { color: var(--teks-muda); font-size: .95rem; }
+
+        /* ====== HARGA / PRICING ====== */
+        .harga-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
+            align-items: stretch;
+        }
+        .harga-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 30px 26px;
+            text-align: center;
+            position: relative;
+        }
+        .harga-card.populer {
+            border: 2px solid var(--aksen);
+            box-shadow: 0 0 24px rgba(0,194,255,0.15);
+        }
+        .harga-card.populer::before {
+            content: "PALING LARIS";
+            position: absolute;
+            top: -14px; left: 50%;
+            transform: translateX(-50%);
+            background: var(--aksen);
+            color: #06121A;
+            font-size: .75rem;
+            font-weight: 700;
+            padding: 4px 14px;
+            border-radius: 50px;
+            letter-spacing: .5px;
+        }
+        .harga-card h3 { font-size: 1.3rem; margin-bottom: 8px; }
+        .harga-card .harga {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--aksen2);
+            margin-bottom: 4px;
+        }
+        .harga-card .periode { color: var(--teks-muda); font-size: .85rem; margin-bottom: 20px; }
+        .harga-card ul { list-style: none; text-align: left; margin: 0 0 22px; }
+        .harga-card li { padding: 6px 0; font-size: .92rem; color: var(--teks-muda); }
+        .harga-card li::before { content: "✓ "; color: var(--aksen2); font-weight: 700; }
+
+        /* ====== TESTIMONI (singkat) ====== */
+        .testi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+        }
+        .testi-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            padding: 24px;
+        }
+        .testi-card .avatar { color: var(--aksen); font-size: 1.4rem; }
+        .testi-card p { font-style: italic; color: var(--teks-muda); margin: 12px 0; }
+        .testi-card .nama { font-weight: 700; }
+        .testi-card .role { color: var(--teks-muda); font-size: .85rem; }
+
+        /* ====== CTA ====== */
+        .cta {
+            text-align: center;
+            background: linear-gradient(135deg, rgba(0,194,255,0.15), rgba(0,224,198,0.15));
+            border-radius: 20px;
+            padding: 50px 30px;
+        }
+        .cta h2 { font-size: 1.9rem; margin-bottom: 12px; }
+        .cta p { color: var(--teks-muda); margin-bottom: 24px; }
+
+        /* ====== FOOTER ====== */
+        footer {
+            border-top: 1px solid rgba(255,255,255,0.08);
+            padding: 40px 0 24px;
+            background: #070A12;
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 30px;
+            margin-bottom: 24px;
+        }
+        .footer-grid h4 { margin-bottom: 12px; color: var(--teks); }
+        .footer-grid ul { list-style: none; }
+        .footer-grid li { margin-bottom: 8px; }
+        .footer-grid a { color: var(--teks-muda); }
+        .footer-grid a:hover { color: var(--aksen); }
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            color: var(--teks-muda);
+            font-size: .85rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 2rem; }
+            .hero-stats { gap: 20px; }
+        }
+    </style>
 </head>
 <body>
 
-<!-- ================= LANDING PAGE ================= -->
-<section class="landing" id="landing">
-  <nav class="nav">
-    <div class="brand">
-      <div class="brand-icon">🛡</div>
-      <div><b>Izy Analyst AI</b><small>AI Trading Platform</small></div>
-    </div>
-    <div class="nav-menu">
-      <a href="#fitur">Fitur</a>
-      <a href="#harga">Harga</a>
-      <a href="#faq">FAQ</a>
-      <a href="#" onclick="bukaDash(event)" class="btn-outline">Login</a>
-      <a href="#" onclick="bukaDash(event)" class="btn-solid">Daftar</a>
-    </div>
-  </nav>
+    <!-- ====== HEADER / NAVBAR ====== -->
+    <header>
+        <div class="container nav-wrap">
+            <a href="#" class="logo">IzyChartAnalisis</a>
 
-  <div class="hero">
-    <div>
-      <h1>Revolusikan Investasi Anda dengan <span>AI</span></h1>
-      <p>Dapatkan prediksi haga akurat, analisis sentimen, dan insight pasar real-time untuk saham Indonesia, forex, dan crypto.</p>
-      <a href="#" onclick="bukaDash(event)" class="hero-btn">Gabung Waitlist Sekarang →</a>
-      <div class="hero-stats">
-        <div><b>950+</b><span>Saham IDX</span></div>
-        <div><b>30+</b><span>Pair Forex</span></div>
-        <div><b>10+</b><span>Coin Crypto</span></div>
-      </div>
-    </div>
-    <div class="mockup">
-      <div class="mock-top">
-        <i class="r"></i><i class="y"></i><i class="g"></i>
-        <span class="url">izyanalystai.github.io</span>
-      </div>
-      <div class="mock-body">
-        <div style="font-size:12px;color:#8FA3C8;margin-bottom:8px;">Ringkasan Pasar · IHSG 7,066 ▲ +0.46%</div>
-        <div class="m-row"><span>BBCA · Bank Central Asia</span><span class="m-tag sell">SELL ▼</span></div>
-        <div class="m-row"><span>BMRI · Bank Mandiri</span><span class="m-tag buy">BUY ▲</span></div>
-        <div class="m-row"><span>EUR/USD · Forex</span><span class="m-tag buy">BUY ▲</span></div>
-        <div class="m-row"><span>BTC/USDT · Crypto</span><span class="m-tag buy">BUY ▲</span></div>
-      </div>
-    </div>
-  </div>
+            <nav>
+                <ul id="nav-menu">
+                    <li><a href="#fitur">Fitur</a></li>
+                    <li><a href="#harga">Harga</a></li>
+                    <li><a href="#tentang">Tentang</a></li>
+                    <li><a href="#faq">FAQ</a></li>
+                    <li><a href="#kontak">Kontak</a></li>
+                    <li><a href="#" class="btn-nav">Daftar Gratis</a></li>
+                </ul>
+            </nav>
 
-  <div class="features" id="fitur">
-    <h2 class="section-title">Fitur Unggulan</h2>
-    <p class="section-sub">Teknologi AI canggih untuk keputusan investasi lebih cerdas</p>
-    <div class="feat-grid">
-      <div class="feat-card">
-        <div class="feat-icon">🧠</div>
-        <h3>Prediksi Harga AI Akurat</h3>
-        <p>AI menganalisis data historis untuk memprediksi pergerakan harga dengan akurasi tinggi.</p>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">📊</div>
-        <h3>Data Pasar Real-time</h3>
-        <p>Pantau saham IDX, forex, dan crypto dengan harga pasar asli yang selalu diperbarui.</p>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">🔍</div>
-        <h3>Screener Saham Cerdas</h3>
-        <p>Filter saham berdasarkan fundamental, teknikal, dan indikator khusus Anda.</p>
-      </div>
-    </div>
-  </div>
+            <span id="menu-toggle">☰</span>
+        </div>
+    </header>
 
-  <div class="features" id="harga" style="max-width:700px;">
-    <h2 class="section-title">Harga</h2>
-    <p class="section-sub">Mulai gratis, tingkatkan sesuai kebutuhan</p>
-    <div class="feat-grid" style="grid-template-columns:repeat(2,1fr);">
-      <div class="feat-card" style="text-align:center;">
-        <h3>Gratis</h3>
-        <p style="font-size:28px;font-weight:800;">Rp 0<span style="font-size:14px;color:#8FA3C8;">/bln</span></p>
-        <p>20 saham dipantau<br>Data delay 15-20 mnt</p>
-      </div>
-      <div class="feat-card" style="text-align:center;border-color:rgba(13,189,139,.5);">
-        <h3>Pro</h3>
-        <p style="font-size:28px;font-weight:800;color:#16C784;">Rp 99rb<span style="font-size:14px;color:#8FA3C8;">/bln</span></p>
-        <p>Semua saham + forex + crypto<br>Data real-time + prediksi AI</p>
-      </div>
-    </div>
-  </div>
+    <!-- ====== HERO ====== -->
+    <section class="hero">
+        <div class="container">
+            <h1>Analisis Saham AI<br>untuk <span>Investor Cerdas</span></h1>
+            <p>Wawasan pasar berbasis Kecerdasan Buatan, lengkap dengan outlook harian untuk membantu Anda mengambil keputusan investasi yang lebih cerdas.</p>
 
-  <div class="features" id="faq" style="max-width:700px;">
-    <h2 class="section-title">FAQ</h2>
-    <div class="feat-card" style="margin-bottom:12px;text-align:left;">
-      <h3>Apakah data ini real-time?</h3>
-      <p>Versi gratis menggunakan Yahoo Finance dengan delay 15-20 menit. Versi Pro dapat menandaan akses data yang lebih cepat.</p>
-    </div>
-    <div class="feat-card" style="text-align:left;">
-      <h3>Apakah sinyal AI akurat?</h3>
-      <p>Sinyal AI berdasarkan analisis teknikal (MA, RSI, momentum). Ini alat bantu analisis, bukan jaminan keuntungan.</p>
-    </div>
-  </div>
-</section>
+            <div class="hero-btns">
+                <a href="#kontak" class="btn btn-primary">Daftar Gratis</a>
+                <a href="#fitur" class="btn btn-outline">Lihat Fitur</a>
+            </div>
 
-<!-- ================= DASHBOARD ================= -->
-<section class="dash" id="dash">
-  <aside class="sidebar">
-    <div class="side-logo">🛡</div>
-    <div class="side-item aktif" title="Dashboard">📊<span>Dashboard</span></div>
-    <div class="side-item" title="Watchlist">⭐<span>Watchlist</span></div>
-    <div class="side-item" title="Portfolio">💼<span>Portfolio</span></div>
-    <div class="side-item" title="Sinyal AI">🤖<span>Sinyal AI</span></div>
-    <div class="side-item" title="Analisis">📈<span>Analisis</span></div>
-    <div class="side-item" onclick="bukaLanding(event)" title="Beranda">🏠<span>Beranda</span></div>
-  </aside>
+            <div class="hero-stats">
+                <div><h3>10K+</h3><p>Analisis Harian</p></div>
+                <div><h3>98%</h3><p>Tingkat Akurasi Model AI</p></div>
+                <div><h3>24/7</h3><p>Analisis Otomatis</p></div>
+            </div>
+        </div>
+    </section>
 
-  <div class="main-area">
-    <div class="dash-header">
-      <div>
-        <h2>Dashboard</h2>
-        <small id="waktu">Ringkasan pasar dan sinyal AI hari ini</small>
-      </div>
-      <button class="tab-btn aktif" onclick="bukaLanding(event)">🏠</button>
-    </div>
+    <!-- ====== FITUR ====== -->
+    <section id="fitur">
+        <div class="container">
+            <div class="section-title">
+                <span class="badge">FITUR UNGGULAN</span>
+                <h2>Analisis yang Anda Butuhkan</h2>
+                <p>Lengkap dengan prediksi harga, pola grafik, dan rekomendasi — semua dalam satu platform.</p>
+            </div>
 
-    <!-- Kartu sinyal -->
-    <div class="sig-grid" id="sigGrid">
-      <div class="sig-card buy-color"><b id="cBuy">0</b><span>Sinyal BUY</span></div>
-      <div class="sig-card sell-color"><b id="cSell">0</b><span>Sinyal SELL</span></div>
-      <div class="sig-card hold-color"><b id="cHold">0</b><span>Sinyal HOLD</span></div>
-      <div class="sig-card"><b id="cConf">0%</b><span>Avg Confidence</span></div>
-    </div>
+            <div class="fitur-grid">
+                <div class="fitur-card">
+                    <div class="icon">📈</div>
+                    <h3>Prediksi Harga</h3>
+                    <p>Perkiraan pergerakan harga saham berbasis model AI yang terus belajar.</p>
+                </div>
+                <div class="fitur-card">
+                    <div class="icon">📊</div>
+                    <h3>Pola Grafik</h3>
+                    <p>Deteksi otomatis pola grafik yang berpeluang menunjukkan momentum pasar.</p>
+                </div>
+                <div class="fitur-card">
+                    <div class="icon">🎯</div>
+                    <h3>Rekomendasi Saham</h3>
+                    <p>Rekomendasi portofolio yang disesuaikan dengan profil risiko Anda.</p>
+                </div>
+                <div class="fitur-card">
+                    <div class="icon">🌙</div>
+                    <h3>Outlook Market Besok</h3>
+                    <p>Analisis malam hari (19.00–22.00 WIB) untuk panduan trading esok hari.</p>
+                </div>
+                <div class="fitur-card">
+                    <div class="icon">🕒</div>
+                    <h3>Data Real-Time</h3>
+                    <p>Premium: data real-time untuk keputusan saat pasar sedang aktif.</p>
+                </div>
+                <div class="fitur-card">
+                    <div class="icon">🔔</div>
+                    <h3>Notifikasi Cerdas</h3>
+                    <p>Peringatan otomatis saat ada peluang atau perubahan penting di pasar.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <!-- Tabs -->
-    <div class="tabs">
-      <button class="tab-btn aktif" data-tab="idx" onclick="pilihTab(this)">🇮🇩 Saham IDX</button>
-      <button class="tab-btn" data-tab="forex" onclick="pilihTab(this)">💱 Forex</button>
-      <button class="tab-btn" data-tab="crypto" onclick="pilihTab(this)">🪙 Crypto</button>
-    </div>
+    <!-- ====== HARGA / PRICING ====== -->
+    <section id="harga">
+        <div class="container">
+            <div class="section-title">
+                <span class="badge">PAKET HARGA</span>
+                <h2>Pilih Paket yang Cocok</h2>
+                <p>Transparan dan terjangkau — mulai dari analisis malam hingga data real-time premium.</p>
+            </div>
 
-    <!-- Tab IDX -->
-    <div class="panel tab-panel" id="tab-idx">
-      <h3>🇮🇩 Saham Indonesia (IDX) <span id="idxInfo" style="text-transform:none;"></span></h3>
-      <div id="idxList">Memuat data pasar...</div>
-    </div>
+            <div class="harga-grid">
+                <!-- Paket Gratis -->
+                <div class="harga-card">
+                    <h3>Gratis</h3>
+                    <div class="harga">Rp 0</div>
+                    <div class="periode">selamanya</div>
+                    <ul>
+                        <li>Analisis malam (delayed 15 menit)</li>
+                        <li>Outlook harian</li>
+                        <li>Pola grafik dasar</li>
+                        <li>Notifikasi standar</li>
+                    </ul>
+                    <a href="#kontak" class="btn btn-outline">Mulai Gratis</a>
+                </div>
 
-    <!-- Tab Forex -->
-    <div class="panel tab-panel" id="tab-forex" style="display:none;">
-      <h3>💱 Forex & Emas (XAUUSD)</h3>
-      <div id="forexList">Memuat data forex...</div>
-    </div>
+                <!-- Paket Pro (populer) -->
+                <div class="harga-card populer">
+                    <h3>Pro</h3>
+                    <div class="harga">Rp 45.000</div>
+                    <div class="periode">/ bulan (Rp 109.000 / 3 bulan)</div>
+                    <ul>
+                        <li>Semua fitur Gratis</li>
+                        <li>Prediksi harga detail</li>
+                        <li>Rekomendasi saham harian</li>
+                        <li>Data delayed 15 menit</li>
+                        <li>Support prioritas</li>
+                    </ul>
+                    <a href="#kontak" class="btn btn-primary">Pilih Pro</a>
+                </div>
 
-    <!-- Tab Crypto -->
-    <div class="panel tab-panel" id="tab-crypto" style="display:none;">
-      <h3>🪙 Cryptocurrency</h3>
-      <div id="cryptoList">Memuat data crypto...</div>
-    </div>
+                <!-- Paket Premium -->
+                <div class="harga-card">
+                    <h3>Premium</h3>
+                    <div class="harga">Rp 199.000</div>
+                    <div class="periode">/ bulan (Rp 899.000 / 6 bulan)</div>
+                    <ul>
+                        <li>Semua fitur Pro</li>
+                        <li>Data Real-Time</li>
+                        <li>Alert perdagangan live</li>
+                        <li>Konsultasi portofolio 1-on-1</li>
+                        <li>Fitur analisis eksklusif</li>
+                    </ul>
+                    <a href="#kontak" class="btn btn-outline">Pilih Premium</a>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <!-- Top movers -->
-    <div class="panel">
-      <h3>🚀 Top Movers</h3>
-      <div id="moverList">Memuat...</div>
-    </div>
+    <!-- ====== TESTIMONI ====== -->
+    <section id="tentang">
+        <div class="container">
+            <div class="section-title">
+                <span class="badge">KATA MEREKA</span>
+                <h2>Dipercaya Investor Indonesia</h2>
+            </div>
 
-    <p class="foot">Izy Analyst AI · Sumber data: Yahoo Finance (delay 15-20 menit). Sinyal AI bukan jaminan profit.</p>
-  </div>
-</section>
+            <div class="testi-grid">
+                <div class="testi-card">
+                    <div class="avatar">👤</div>
+                    <p>"Outlook hariannya sangat membantu saya memutuskan posisi sebelum pasar buka."</p>
+                    <div class="nama">Andi P.</div>
+                    <div class="role">Investor jangka menengah</div>
+                </div>
+                <div class="testi-card">
+                    <div class="avatar">👩‍💼</div>
+                    <p>"Harga terjangkau dan analisisnya mudah dipahami, cocok untuk pemula seperti saya."</p>
+                    <div class="nama">Sari W.</div>
+                    <div class="role">Pengguna Pro</div>
+                </div>
+                <div class="testi-card">
+                    <div class="avatar">👨‍💻</div>
+                    <p>"Data real-time di paket Premium terasa akurat dan cepat. Sangat membantu day trading."</p>
+                    <div class="nama">Rizky A.</div>
+                    <div class="role">Pengguna Premium</div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<script>
-// ===== DAFTAR ASET =====
-var IDX_LIST = [
-  ["^JKSE","IHSG","Indeks Utama"],
-  ["BBCA.JK","BBCA","Bank Central Asia"],
-  ["BBRI.JK","BBRI","Bank Rakyat Indonesia"],
-  ["BMRI.JK","BMRI","Bank Mandiri"],
-  ["BBNI.JK","BBNI","Bank Negara Indonesia"],
-  ["TLKM.JK","TLKM","Telkom Indonesia"],
-  ["ASII.JK","ASII","Astra International"],
-  ["GOTO.JK","GOTO","GoTo Gojek Tokopedia"],
-  ["ANTM.JK","ANTM","Aneka Tambang"],
-  ["MDKA.JK","MDKA","Merdeka Copper Gold"],
-  ["ADRO.JK","ADRO","Adaro Energy"],
-  ["CPIN.JK","CPIN","Charoen Pokphand"],
-  ["INDF.JK","INDF","Indofood Sukses"],
-  ["ICBP.JK","ICBP","Indofood CBP"],
-  ["UNVR.JK","UNVR","Unilever Indonesia"],
-  ["KLBF.JK","KLBF","Kalbe Farma"],
-  ["PTBA.JK","PTBA","Bukit Asam"],
-  ["TINS.JK","TINS","Timah"]
-];
+    <!-- ====== CTA ====== -->
+    <section>
+        <div class="container">
+            <div class="cta">
+                <h2>Mulai Investasi Lebih Cerdas Sekarang</h2>
+                <p>Gabung dengan ribuan investor yang mempercayakan analisis mereka pada AI.</p>
+                <a href="#kontak" class="btn btn-primary">Daftar Gratis</a>
+            </div>
+        </div>
+    </section>
 
-var FOREX_LIST = [
-  ["EURUSD=X","EUR/USD","Euro vs Dollar"],
-  ["GBPUSD=X","GBP/USD","Pound vs Dollar"],
-  ["USDJPY=X","USD/JPY","Dollar vs Yen"],
-  ["AUDUSD=X","AUD/USD","Aus Dollar vs USD"],
-  ["USDCHF=X","USD/CHF","Dollar vs Franc"],
-  ["USDCAD=X","USD/CAD","Dollar vs Kanada"],
-  ["NZDUSD=X","NZD/USD","NZ Dollar vs USD"],
-  ["XAUUSD=X","XAU/USD","Emas (Gold)"],
-  ["XAGUSD=X","XAG/USD","Perak (Silver)"],
-  ["USDIDR=X","USD/IDR","Dollar vs Rupiah"]
-];
+    <!-- ====== FOOTER ====== -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <h4>IzyChartAnalisis</h4>
+                    <p style="color:var(--teks-muda)">Platform analisis saham AI untuk investor Indonesia.</p>
+                </div>
+                <div>
+                    <h4>Menu</h4>
+                    <ul>
+                        <li><a href="#fitur">Fitur</a></li>
+                        <li><a href="#harga">Harga</a></li>
+                        <li><a href="#tentang">Tentang</a></li>
+                        <li><a href="#faq">FAQ</a></li>
+                        <li><a href="#kontak">Kontak</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Kontak</h4>
+                    <ul>
+                        <li><a href="#">WhatsApp</a></li>
+                        <li><a href="#">Instagram</a></li>
+                        <li><a href="#">TikTok</a></li>
+                        <li><a href="#">YouTube</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Kebijakan Privasi</a></li>
+                        <li><a href="#">Syarat & Ketentuan</a></li>
+                        <li><a href="#">Disclaimer</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                © 2026 IzyChartAnalisis. Semua hak dilindungi. Analisis bukan jaminan keuntungan.
+            </div>
+        </div>
+    </footer>
 
-var CRYPTO_LIST = [
-  ["BTC-USD","BTC/USDT","Bitcoin"],
-  ["ETH-USD","ETH/USDT","Ethereum"],
-  ["BNB-USD","BNB/USDT","Binance Coin"],
-  ["SOL-USD","SOL/USDT","Solana"],
-  ["XRP-USD","XRP/USDT","Ripple"],
-  ["ADA-USD","ADA/USDT","Cardano"],
-  ["DOGE-USD","DOGE/USDT","Dogecoin"],
-  ["DOT-USD","DOT/USDT","Polkadot"],
-  ["AVAX-USD","AVAX/USDT","Avalanche"],
-  ["LINK-USD","LINK/USDT","Chainlink"]
-];
+    <!-- ====== JAVASCRIPT (menu HP) ====== -->
+    <script>
+        // Toggle menu saat tombol burger diklik (di layar HP)
+        document.getElementById('menu-toggle').addEventListener('click', function () {
+            document.getElementById('nav-menu').classList.toggle('open');
+        });
+    </script>
 
-// ===== PROXY FETCH =====
-async function ambil(kode){
-  var proxies=[
-    function(u){return "https://corsproxy.io/?url="+encodeURIComponent(u);},
-    function(u){return "https://api.allorigins.win/raw?url="+encodeURIComponent(u);}
-  ];
-  var url="https://query1.finance.yahoo.com/v8/finance/chart/"+encodeURIComponent(kode)+"?interval=1d&range=5d";
-  for(var i=0;i<proxies.length;i++){
-    try{
-      var j=await (await fetch(proxies[i](url))).json();
-      var r=j.chart&&j.chart.result&&j.chart.result[0];
-      if(r&&r.meta&&r.meta.regularMarketPrice!=null) return r;
-    }catch(e){}
-  }
-  return null;
-}
-
-function sinyalAI(changePct, harga){
-  // simple AI signal
-  if(changePct>=1.0) return {t:"BUY",cl:"buy",conf:Math.min(95,65+changePct*5|0)};
-  if(changePct>0)    return {t:"HOLD",cl:"hold",conf:55};
-  if(changePct>=-1.0)return {t:"HOLD",cl:"hold",conf:52};
-  return {t:"SELL",cl:"sell",conf:Math.min(92,60-Math.abs(changePct)*5|0)};
-}
-
-function fmtHarga(v, isForex){
-  if(v==null) return "--";
-  if(isForex) return v.toFixed(4);
-  if(v>=1000) return Math.round(v).toLocaleString("id-ID");
-  return v.toFixed(2);
-}
-
-// ===== RENDER SATU BARIS =====
-function barisAset(nama, sub, harga, chg, sig){
-  var up=chg>=0;
-  return '<div class="asset-row">'+
-    '<div><div class="asset-name">'+nama+'</div><div class="asset-sub">'+sub+'</div></div>'+
-    '<div class="asset-price"><b>'+harga+'</b>'+
-    '<span class="'+(up?'up':'down')+'">'+(up?'▲ +':'▼ ')+chg.toFixed(2)+'%</span>'+
-    ' <span class="pill '+sig.cl+'">'+sig.t+'</span></div></div>';
-}
-
-// ===== MUAT TAB IDX =====
-var countBuy=0,countSell=0,countHold=0,sumConf=0,nConf=0;
-
-async function muatIDX(){
-  var el=document.getElementById("idxList");
-  el.innerHTML="⏳ Memuat data pasar...";
-  var html="";
-  for(var i=0;i<IDX_LIST.length;i++){
-    var k=IDX_LIST[i];
-    var r=await ambil(k[0]);
-    var harga, chg, isF=false;
-    if(r){
-      var m=r.meta;
-      harga=m.regularMarketPrice;
-      var pv=r.indicators.quote[0].previousClose;
-      chg= pv? ((harga/pv-1)*100) : 0;
-    } else {
-      // fallback
-      harga=1500+i*120; chg=(Math.random()*6-2.5);
-      document.getElementById("idxInfo").textContent="(demo)";
-    }
-    var sig=sinyalAI(chg,harga);
-    if(i>0){ // skip IHSG untuk sinyal count
-      if(sig.t=="BUY")countBuy++; else if(sig.t=="SELL")countSell++; else countHold++;
-      sumConf+=sig.conf; nConf++;
-    }
-    html+=barisAset(k[1],k[2],fmtHarga(harga,isF),chg,sig);
-    el.innerHTML=html+(i<IDX_LIST.length-1?"":"");
-  }
-  updateSig();
-}
-
-// ===== MUAT FOREX =====
-async function muatForex(){
-  var el=document.getElementById("forexList");
-  var html="";
-  for(var i=0;i<FOREX_LIST.length;i++){
-    var k=FOREX_LIST[i];
-    var r=await ambil(k[0]);
-    var harga,chg,isF=true;
-    if(r){
-      var m=r.meta; harga=m.regularMarketPrice;
-      var pv=r.indicators.quote[0].previousClose;
-      chg=pv?((harga/pv-1)*100):0;
-    } else {
-      harga=1+ (i*0.02); chg=(Math.random()*1-0.5);
-    }
-    var sig=sinyalAI(chg,harga);
-    html+=barisAset(k[1],k[2],fmtHarga(harga,isF),chg,sig);
-    el.innerHTML=html;
-  }
-}
-
-// ===== MUAT CRYPTO =====
-async function muatCrypto(){
-  var el=document.getElementById("cryptoList");
-  var html="";
-  for(var i=0;i<CRYPTO_LIST.length;i++){
-    var k=CRYPTO_LIST[i];
-    var r=await ambil(k[0]);
-    var harga,chg,isF=false;
-    if(r){
-      var m=r.meta; harga=m.regularMarketPrice;
-      var pv=r.indicators.quote[0].previousClose;
-      chg=pv?((harga/pv-1)*100):0;
-    } else {
-      harga=1000+(i*3000); chg=(Math.random()*6-2);
-    }
-    var sig=sinyalAI(chg,harga);
-    html+=barisAset(k[1],k[2],fmtHarga(harga,isF),chg,sig);
-    el.innerHTML=html;
-  }
-}
-
-function updateSig(){
-  document.getElementById("cBuy").textContent=countBuy;
-  document.getElementById("cSell").textContent=countSell;
-  document.getElementById("cHold").textContent=countHold;
-  if(nConf>0) document.getElementById("cConf").textContent=Math.round(sumConf/nConf)+"%";
-}
-
-// ===== TOP MOVERS =====
-async function muatMovers(){
-  var el=document.getElementById("moverList");
-  var movers=[];
-  var tries=["GOTO.JK","ANTM.JK","MDKA.JK","TLKM.JK","BTC-USD","ETH-USD","XAUUSD=X"];
-  for(var i=0;i<tries.length && movers.length<5;i++){
-    var r=await ambil(tries[i]);
-    if(r){
-      var m=r.meta, pv=r.indicators.quote[0].previousClose;
-      var c=pv?((m.regularMarketPrice/pv-1)*100):0;
-      movers.push({n:tries[i],v:m.regularMarketPrice,c:c});
-    }
-  }
-  movers.sort(function(a,b){return Math.abs(b.c)-Math.abs(a.c);});
-  var names={"GOTO.JK":"GOTO","ANTM.JK":"ANTM","MDKA.JK":"MDKA","TLKM.JK":"TLKM","BTC-USD":"BTC/USDT","ETH-USD":"ETH/USDT","XAUUSD=X":"XAU/USD"};
-  var html="";
-  movers.slice(0,5).forEach(function(m){
-    var up=m.c>=0;
-    html+='<div class="asset-row"><div><b>'+(names[m.n]||m.n)+'</b></div>'+
-      '<div class="asset-price"><b>'+m.v.toLocaleString("id-ID",{maximumFractionDigits:2})+'</b>'+
-      '<span class="'+(up?'up':'down')+'">'+(up?'▲ +':'▼ ')+m.c.toFixed(2)+'%</span></div></div>';
-  });
-  el.innerHTML=html||"Belum ada data.";
-}
-
-// ===== NAVIGASI =====
-function bukaDash(e){ e.preventDefault(); document.getElementById("landing").style.display="none"; var d=document.getElementById("dash"); d.style.display="flex"; }
-function bukaLanding(e){ e.preventDefault(); document.getElementById("dash").style.display="none"; document.getElementById("landing").style.display="block"; }
-function pilihTab(btn){
-  document.querySelectorAll(".tab-btn").forEach(function(b){b.classList.remove("aktif");});
-  btn.classList.add("aktif");
-  var t=btn.getAttribute("data-tab");
-  document.getElementById("tab-idx").style.display = t==="idx"?"block":"none";
-  document.getElementById("tab-forex").style.display = t==="forex"?"block":"none";
-  document.getElementById("tab-crypto").style.display = t==="crypto"?"block":"none";
-}
-
-function updateJam(){
-  var n=new Date(),p=function(x){return String(x).padStart(2,"0");};
-  document.getElementById("waktu").textContent="Ringkasan pasar · "+p(n.getDate())+"-"+p(n.getMonth()+1)+"-"+n.getFullYear()+" "+p(n.getHours())+":"+p(n.getMinutes())+" WIB";
-}
-
-// ===== START =====
-window.addEventListener("load",function(){
-  muatIDX(); muatForex(); muatCrypto(); muatMovers(); updateJam();
-  setInterval(updateJam,1000);
-  // refresh data tiap 60 detik
-  setInterval(function(){ if(document.visibilityState==="visible" && document.getElementById("dash").style.display==="flex"){ muatIDX(); muatForex(); muatCrypto(); } },60000);
-});
-</script>
 </body>
 </html>
