@@ -1,6 +1,6 @@
 const https = require('https');
 
-function req(host, path) {
+function requestData(host, path) {
   return new Promise((resolve) => {
     const r = https.request({ host, path, method: 'GET', headers: {
       'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
@@ -24,7 +24,7 @@ module.exports = async (req, res) => {
   const code = sym + '.JK';
 
   try {
-    const r1 = await req('api.stockbit.com', '/v1/trade/price/' + code);
+    const r1 = await requestData('api.stockbit.com', '/v1/trade/price/' + code);
     if (r1.body && !r1.body.startsWith('<')) {
       try {
         const raw = JSON.parse(r1.body);
@@ -42,7 +42,7 @@ module.exports = async (req, res) => {
       } catch (e) {}
     }
 
-    const r2 = await req('www.idx.co.id', '/primary/TradingSummary/GetStockSummary');
+    const r2 = await requestData('www.idx.co.id', '/primary/TradingSummary/GetStockSummary');
     if (r2.body && !r2.body.startsWith('<')) {
       try {
         const j = JSON.parse(r2.body);
