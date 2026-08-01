@@ -4,31 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>IzyChartAI - Analisis Saham & Sinyal Trading</title>
-<meta name="description" content="IzyChartAI: Analisa AI, grafik real-time, sinyal trading, screener 950+ saham, bandarmology, dan edukasi trading.">
+<meta name="description" content="IzyChartAI: Analisa AI, grafik, sinyal trading, screener, bandarmology, dan edukasi trading.">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
   --bg:#0B0F1A;--bg-card:#151B2B;--bg-card2:#1A2235;
   --aksen:#00C2FF;--aksen2:#00E0C6;--teks:#EAEDF3;--teks-muda:#A7B0C3;
-  --hijau:#00E676;--merah:#FF5252;--kuning:#FFC400;--ungu:#7C4DFF;
+  --hijau:#00E676;--merah:#FF5252;--kuning:#FFC400;
 }
 html{scroll-behavior:smooth}
 body{font-family:'Segoe UI',Tahoma,sans-serif;background:var(--bg);color:var(--teks);line-height:1.55;-webkit-tap-highlight-color:transparent}
 a{color:var(--aksen);text-decoration:none}
 button{font-family:inherit;cursor:pointer;border:none}
 .container{max-width:520px;margin:0 auto;padding:0 16px 100px}
-
-/* DISCLAIMER */
-#disclaimer{position:fixed;inset:0;background:rgba(5,8,15,.97);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px}
-#disclaimer .box{background:var(--bg-card);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:24px;max-width:420px;width:100%}
-#disclaimer h2{font-size:1.3rem;margin-bottom:4px}
-#disclaimer .sub{color:var(--teks-muda);font-size:.85rem;margin-bottom:16px}
-#disclaimer h4{font-size:1rem;margin-top:14px;margin-bottom:6px;color:var(--aksen)}
-#disclaimer p{font-size:.85rem;color:var(--teks-muda);margin-bottom:10px}
-.chk{display:flex;align-items:center;gap:10px;margin:8px 0;font-size:.85rem}
-.chk input{width:18px;height:18px;accent-color:var(--aksen);flex-shrink:0}
-.btn-lanjut{width:100%;background:var(--aksen);color:#06121A;font-weight:700;padding:13px;border-radius:10px;font-size:.95rem;margin-top:16px}
-.btn-lanjut:disabled{background:#333;color:#777;cursor:not-allowed}
 
 /* TOP BAR */
 .topbar{position:sticky;top:0;background:rgba(11,15,26,.95);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.06);z-index:50}
@@ -44,8 +32,8 @@ button{font-family:inherit;cursor:pointer;border:none}
 
 /* KARTU & TOMBOL */
 .card{background:var(--bg-card);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:16px;margin-bottom:12px}
-.btn-row{display:flex;gap:10px;margin:10px 0}
-.btn-pil{flex:1;padding:12px;border-radius:10px;background:var(--bg-card2);color:var(--teks);font-weight:600;font-size:.9rem;border:1px solid rgba(255,255,255,.08)}
+.btn-row{display:flex;gap:10px;margin:10px 0;flex-wrap:wrap}
+.btn-pil{flex:1;min-width:90px;padding:12px;border-radius:10px;background:var(--bg-card2);color:var(--teks);font-weight:600;font-size:.9rem;border:1px solid rgba(255,255,255,.08)}
 .btn-pil.pilih{background:var(--aksen);color:#06121A;border-color:var(--aksen)}
 .input{width:100%;padding:13px;border-radius:10px;background:var(--bg-card2);border:1px solid rgba(255,255,255,.1);color:var(--teks);font-size:1rem}
 .btn-utama{display:block;width:100%;background:linear-gradient(90deg,var(--aksen),var(--aksen2));color:#06121A;font-weight:700;padding:14px;border-radius:12px;font-size:1rem;margin:12px 0}
@@ -65,22 +53,6 @@ button{font-family:inherit;cursor:pointer;border:none}
 </style>
 </head>
 <body>
-
-<!-- DISCLAIMER -->
-<div id="disclaimer">
-  <div class="box">
-    <h2>Sebelum Melanjutkan</h2>
-    <p class="sub">Konten ini untuk tujuan edukasi, bukan nasihat keuangan.</p>
-    <h4>01. DATA — Akurasi Data</h4>
-    <p>Data pasar berasal dari pihak ketiga. Akurasi tidak dijamin penuh.</p>
-    <h4>02. KEPUTUSAN — Tanggung Jawab Anda</h4>
-    <p>Keputusan investasi sepenuhnya milik Anda. Konsultasikan dengan penasihat berlisensi.</p>
-    <label class="chk"><input type="checkbox" id="c1"> Konten bukan nasihat keuangan.</label>
-    <label class="chk"><input type="checkbox" id="c2"> Saya paham risiko & potensi kehilangan modal.</label>
-    <label class="chk"><input type="checkbox" id="c3"> Saya setuju Syarat & Ketentuan serta Kebijakan Privasi.</label>
-    <button class="btn-lanjut" id="btn-lanjut" disabled onclick="document.getElementById('disclaimer').style.display='none'">Saya Mengerti dan Lanjutkan</button>
-  </div>
-</div>
 
 <!-- TOP BAR -->
 <div class="topbar">
@@ -103,9 +75,9 @@ button{font-family:inherit;cursor:pointer;border:none}
 
     <div class="section-title">Tipe Investor</div>
     <div class="btn-row">
-      <button class="btn-pil pilih">⚡ Scalping</button>
-      <button class="btn-pil">📈 Swing</button>
-      <button class="btn-pil">⏳ Day Trading</button>
+      <button class="btn-pil pilih" onclick=pilihBtn(this)>⚡ Scalping</button>
+      <button class="btn-pil" onclick=pilihBtn(this)>📈 Swing</button>
+      <button class="btn-pil" onclick=pilihBtn(this)>⏳ Day Trading</button>
     </div>
 
     <div class="section-title">Cari Saham</div>
@@ -139,19 +111,14 @@ button{font-family:inherit;cursor:pointer;border:none}
 <div id="panel-grafik" class="panel">
   <div class="container">
     <div class="section-title">📈 Grafik Harga & IHSG</div>
-    <p class="section-sub">Grafik real-time. Gunakan toolbar untuk timeframe & indikator teknikal.</p>
+    <p class="section-sub">Grafik. Gunakan toolbar untuk timeframe & indikator teknikal.</p>
     <div style="display:flex;gap:8px;margin-bottom:12px">
-      <input class="input" id="chart-simbol" placeholder="Kode saham / forex, mis: TPIA">
+      <input class="input" id="chart-simbol" placeholder="Kode, mis BBRI / JKSE / EURUSD">
       <button class="btn-pil" style="flex:0 0 auto;background:var(--aksen);color:#06121A;font-weight:700" id="btn-grafik">Buka</button>
     </div>
-
     <div class="card" style="padding:0;overflow:hidden;border-radius:14px">
-      <div id="chart-wrap" style="height:420px;width:100%"></div>
-      <div style="padding:6px 12px;background:var(--bg-card2);font-size:.75rem;color:var(--teks-muda)">
-        Data & grafik oleh <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank"><span style="color:#3BB3E4">TradingView</span></a>
-      </div>
+      <iframe id="chart-frame" src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_iz1&symbol=JKSE&interval=D&theme=dark&style=1&lang=id&timezone=Asia%2FJakarta&hidesidetoolbar=0" style="width:100%;height:420px;border:0;display:block"></iframe>
     </div>
-    <p style="color:var(--teks-muda);font-size:.78rem;margin-top:8px">💡 Indikator teknikal (RSI, MACD, dll.) tersedia di toolbar grafik.</p>
   </div>
 </div>
 
@@ -161,9 +128,9 @@ button{font-family:inherit;cursor:pointer;border:none}
     <div class="section-title">📡 AI Sinyal Trading</div>
     <p class="section-sub">Sinyal saham & forex dengan ENTRY, STOP LOSS, dan TAKE PROFIT.</p>
     <div class="btn-row">
-      <button class="btn-pil pilih">Saham</button>
-      <button class="btn-pil">Forex</button>
-      <button class="btn-pil">Crypto</button>
+      <button class="btn-pil pilih" onclick=pilihBtn(this)>Saham</button>
+      <button class="btn-pil" onclick=pilihBtn(this)>Forex</button>
+      <button class="btn-pil" onclick=pilihBtn(this)>Crypto</button>
     </div>
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center">
@@ -198,19 +165,19 @@ button{font-family:inherit;cursor:pointer;border:none}
 <div id="panel-screener" class="panel">
   <div class="container">
     <div class="section-title">🔍 Screener Saham</div>
-    <p class="section-sub">Pencarian 950+ saham dalam hitungan menit.</p>
+    <p class="section-sub">Pencarian 950+ saham — data demo/edukasi.</p>
     <div style="display:flex;gap:8px;margin-bottom:14px">
       <input class="input" id="scr-cari" placeholder="Cari nama / kode saham...">
       <button class="btn-pil" style="flex:0 0 auto;background:var(--aksen);color:#06121A;font-weight:700" id="btn-cari">Cari</button>
     </div>
-    <div class="btn-row" style="flex-wrap:wrap">
-      <button class="btn-pil pilih">Teknikal</button>
-      <button class="btn-pil">Fundamental</button>
-      <button class="btn-pil">Fear & Greed</button>
-      <button class="btn-pil">Price</button>
+    <div class="btn-row">
+      <button class="btn-pil pilih" onclick=pilihBtn(this)>Teknikal</button>
+      <button class="btn-pil" onclick=pilihBtn(this)>Fundamental</button>
+      <button class="btn-pil" onclick=pilihBtn(this)>Fear & Greed</button>
+      <button class="btn-pil" onclick=pilihBtn(this)>Price</button>
     </div>
 
-    <div class="card" style="font-size:.8rem;color:var(--teks-muda)" id="scr-status">⏳ Memuat harga terbaru...</div>
+    <div class="card" style="font-size:.8rem;color:var(--teks-muda)">ℹ️ Data saat ini bersifat <b>statis/demo</b>. Versi live memerlukan API data pasar.</div>
 
     <div class="card" style="font-size:.9rem">
       <div style="display:flex;justify-content:space-between;align-items:center">
@@ -233,17 +200,17 @@ button{font-family:inherit;cursor:pointer;border:none}
   <div class="container">
     <div class="section-title">🏦 Bandarmology</div>
     <p class="section-sub">Analisis aktivitas broker institusi, asing & ritel.</p>
-    <div class="btn-row" style="flex-wrap:wrap">
-      <button class="btn-pil">Accum</button>
-      <button class="btn-pil">Foreign Net</button>
-      <button class="btn-pil">Lapkeu</button>
-      <button class="btn-pil">HAKA/HAKI</button>
-      <button class="btn-pil">Konglo</button>
-      <button class="btn-pil">Sektor</button>
-      <button class="btn-pil">Usaha</button>
-      <button class="btn-pil">Insider</button>
-      <button class="btn-pil pilih">Chart</button>
-      <button class="btn-pil">Al Bandar</button>
+    <div class="btn-row">
+      <button class="btn-pil" onclick=pilihBtn(this)>Accum</button>
+      <button class="btn-pil" onclick=pilihBtn(this)>Foreign Net</button>
+      <button class="btn-pil" onclick=pilihBtn(this)>Lapkeu</button>
+      <button class="btn-pil" onclick=pilihBtn(this)>HAKA/HAKI</button>
+      <button class="btn-pil" onclick=pilihBtn(this)>Konglo</button>
+      <button class="btn-pil" onclick=pilihBtn(this)>Sektor</button>
+      <button class="btn-pil" onclick=pilihBtn(this)>Usaha</button>
+      <button class="btn-pil" onclick=pilihBtn(this)>Insider</button>
+      <button class="btn-pil pilih" onclick=pilihBtn(this)>Chart</button>
+      <button class="btn-pil" onclick=pilihBtn(this)>Al Bandar</button>
     </div>
     <div class="card" style="text-align:center;padding:30px 16px;border-color:rgba(255,196,0,.3)">
       <div style="font-size:2.5rem;margin-bottom:10px">🔒</div>
@@ -296,16 +263,16 @@ button{font-family:inherit;cursor:pointer;border:none}
       <b style="color:var(--aksen)">Asisten Trading</b>
       <p style="font-size:.9rem;margin-top:6px">Hi! Saya asisten trading pro. Tanyakan setup, risiko, atau level harga kepada saya.</p>
     </div>
-    <div style="display:flex;gap:8px;position:fixed;bottom:70px;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:488px;z-index:62">
+    <div style="display:flex;gap:8px;margin-top:10px">
       <input class="input" id="chat-input" placeholder="Tanya sesuatu...">
       <button class="btn-pil" style="flex:0 0 auto;background:var(--aksen);color:#06121A;font-weight:700" id="btn-kirim">➤</button>
     </div>
-    <div id="chat-area" style="padding-bottom:70px"></div>
+    <div id="chat-area" style="margin-top:14px"></div>
   </div>
 </div>
 
 <!-- BOTTOM NAV -->
-<div class="fab">+</div>
+<div class="fab" onclick="alert('Fitur belum tersedia di versi demo.')">+</div>
 <div class="botnav">
   <div class="in">
     <button class="nav-item aktif" data-panel="beranda"><span class="ikon">🏠</span>Beranda</button>
@@ -317,16 +284,19 @@ button{font-family:inherit;cursor:pointer;border:none}
 </div>
 
 <script>
-// ===== DISCLAIMER =====
-const c1=document.getElementById('c1'),c2=document.getElementById('c2'),c3=document.getElementById('c3'),bL=document.getElementById('btn-lanjut');
-function cek(){bL.disabled=!(c1.checked&&c2.checked&&c3.checked)}
-[c1,c2,c3].forEach(c=>c.addEventListener('change',cek));
+// ===== TOMBOL PILIH generik =====
+function pilihBtn(btn){
+  var g=btn.parentElement;
+  var bs=g.querySelectorAll('.btn-pil');
+  for(var i=0;i<bs.length;i++)bs[i].classList.remove('pilih');
+  btn.classList.add('pilih');
+}
 
 // ===== NAVIGASI BOTTOM =====
-document.querySelectorAll('.nav-item').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('aktif'));
-    document.querySelectorAll('.panel').forEach(x=>x.classList.remove('aktif'));
+document.querySelectorAll('.nav-item').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('.nav-item').forEach(function(x){x.classList.remove('aktif');});
+    document.querySelectorAll('.panel').forEach(function(x){x.classList.remove('aktif');});
     btn.classList.add('aktif');
     document.getElementById('panel-'+btn.dataset.panel).classList.add('aktif');
     window.scrollTo(0,0);
@@ -335,125 +305,79 @@ document.querySelectorAll('.nav-item').forEach(btn=>{
 
 // BUKA PANEL DARI MENU LAINNYA
 function bukaPanel(nama){
-  document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('aktif'));
-  document.querySelectorAll('.panel').forEach(x=>x.classList.remove('aktif'));
-  const tombol=document.querySelector('.nav-item[data-panel="lainnya"]');
-  if(tombol)tombol.classList.add('aktif');
+  document.querySelectorAll('.nav-item').forEach(function(x){x.classList.remove('aktif');});
+  document.querySelectorAll('.panel').forEach(function(x){x.classList.remove('aktif');});
+  var t=document.querySelector('.nav-item[data-panel="lainnya"]');
+  if(t)t.classList.add('aktif');
   document.getElementById('panel-'+nama).classList.add('aktif');
   window.scrollTo(0,0);
 }
 
 // ===== ANALISIS DEMO =====
-document.getElementById('btn-analisis').addEventListener('click',()=>{
-  const v=document.getElementById('in-search').value.trim().toUpperCase()||'BBRI';
+document.getElementById('btn-analisis').addEventListener('click',function(){
+  var v=document.getElementById('in-search').value.trim().toUpperCase()||'BBRI';
   document.getElementById('h-simbol').textContent=v;
   document.getElementById('hasil-analisis').style.display='block';
 });
 
-// ===== GRAFIK — TradingView (simbol default stabil: TVC:JKSE) =====
-function muatGrafik(simbol){
-  const wrap=document.getElementById('chart-wrap');
-  const sy=simbol||'TVC:JKSE';
-  wrap.innerHTML=`<div class="tradingview-widget-container" style="height:420px;width:100%"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
-  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>{"autosize":true,"symbol":"${sy}","interval":"D","timezone":"Asia/Jakarta","theme":"dark","style":"1","locale":"id","allow_symbol_change":true,"details":true,"hotlist":false,"calendar":false,"support_host":"https://www.tradingview.com"}<\/script></div>`;
-}
-document.getElementById('btn-grafik').addEventListener('click',()=>{
-  const s=document.getElementById('chart-simbol').value.trim().toUpperCase();
-  const simbol=s?('IDX:'+s):'TVC:JKSE';
-  muatGrafik(simbol);
-  document.getElementById('chart-simbol').value='';
+// ===== GRAFIK =====
+document.getElementById('btn-grafik').addEventListener('click',function(){
+  var s=document.getElementById('chart-simbol').value.trim().toUpperCase()||'JKSE';
+  document.getElementById('chart-frame').src='https://s.tradingview.com/widgetembed/?frameElementId=tradingview_iz1&symbol='+s+'&interval=D&theme=dark&style=1&lang=id&timezone=Asia%2FJakarta&hidesidetoolbar=0';
 });
-muatGrafik('TVC:JKSE');
 
-// ===== SCREENER — harga live Yahoo Finance + fallback statis =====
-const daftar=[
-  ['BBRI','Bank Rakyat Indonesia','BBRI.JK','BUY'],
-  ['BBCA','Bank Central Asia','BBCA.JK','BUY'],
-  ['BMRI','Bank Mandiri','BMRI.JK','BUY'],
-  ['TLKM','Telkom Indonesia','TLKM.JK','BUY'],
-  ['ASII','Astra International','ASII.JK','HOLD'],
-  ['TPIA','Chandra Asri','TPIA.JK','SELL'],
-  ['GOTO','GoTo Gojek','GOTO.JK','HOLD'],
-  ['BBNI','Bank Negara Indonesia','BBNI.JK','BUY'],
-  ['MYOR','Mayora Indah','MYOR.JK','BUY'],
-  ['ICBP','Indofood CBP','ICBP.JK','HOLD'],
-  ['KLBF','Kalbe Farma','KLBF.JK','BUY'],
-  ['UNVR','Unilever Indonesia','UNVR.JK','BUY'],
-  ['ADRO','Alamtri Resources','ADRO.JK','BUY'],
-  ['PGAS','Gas Negara','PGAS.JK','HOLD'],
-  ['PTBA','Bukit Asam','PTBA.JK','SELL']
+// ===== SCREENER (data statis) =====
+var daftar=[
+  ['BBRI','Bank Rakyat Indonesia',1725,'BUY'],
+  ['BBCA','Bank Central Asia',9900,'BUY'],
+  ['BMRI','Bank Mandiri',7350,'BUY'],
+  ['TLKM','Telkom Indonesia',3410,'BUY'],
+  ['ASII','Astra International',5175,'HOLD'],
+  ['TPIA','Chandra Asri',6875,'SELL'],
+  ['GOTO','GoTo Gojek',95,'HOLD'],
+  ['BBNI','Bank Negara Indonesia',5800,'BUY'],
+  ['MYOR','Mayora Indah',2380,'BUY'],
+  ['ICBP','Indofood CBP',11200,'HOLD'],
+  ['KLBF','Kalbe Farma',1650,'BUY'],
+  ['UNVR','Unilever Indonesia',2900,'BUY'],
+  ['ADRO','Alamtri Resources',2260,'BUY'],
+  ['PGAS','Gas Negara',1390,'HOLD'],
+  ['PTBA','Bukit Asam',2850,'SELL']
 ];
-const hargaStatis={BBRI:1725,BBCA:9900,BMRI:7350,TLKM:3410,ASII:5175,TPIA:6875,GOTO:95,BBNI:5800,MYOR:2380,ICBP:11200,KLBF:1650,UNVR:2900,ADRO:2260,PGAS:1390,PTBA:2850};
-const hargaLive={};
-
+function fmtAngka(n){return n.toLocaleString('id-ID');}
 function var_set(key){return getComputedStyle(document.documentElement).getPropertyValue('--'+key).trim();}
-function fmtAngka(n){if(n==null||isNaN(n))return '-';return n.toLocaleString('id-ID');}
-
-async function ambilHarga(kodeJK){
-  try{
-    const url='https://query1.finance.yahoo.com/v7/finance/quote?symbols='+encodeURIComponent(kodeJK)+'&fields=regularMarketPrice,regularMarketChangePercent,shortName';
-    const r=await fetch(url,{mode:'cors'});
-    const j=await r.json();
-    const q=j&&j.quoteResponse&&j.quoteResponse.result&&j.quoteResponse.result[0];
-    if(q&&q.regularMarketPrice!=null){
-      hargaLive[kodeJK]={harga:q.regularMarketPrice,persen:q.regularMarketChangePercent};
-      return true;
-    }
-  }catch(e){}
-  return false;
-}
-
-async function muatSemuaHarga(){
-  const st=document.getElementById('scr-status');
-  st.textContent='⏳ Memuat harga terbaru (Yahoo Finance)...';
-  const results=await Promise.all(daftar.map(d=>ambilHarga(d[2])));
-  const sukses=results.filter(x=>x).length;
-  if(sukses>0){
-    st.textContent='✅ '+sukses+' dari '+daftar.length+' harga diperbarui dari data pasar. (Gunakan pencarian atau refresh untuk data baru.)';
-  }else{
-    st.textContent='⚠️ Data live tidak dapat diambil. Menampilkan data statis (demo).';
-  }
-  tampilSaham('');
-}
-
 function tampilSaham(filter){
-  const box=document.getElementById('daftar-saham');
-  const q=(filter||'').toUpperCase();
-  const hasil=daftar.filter(s=>s[0].includes(q)||s[1].toUpperCase().includes(q));
+  var box=document.getElementById('daftar-saham');
+  var q=(filter||'').toUpperCase();
+  var hasil=daftar.filter(function(s){return s[0].includes(q)||s[1].toUpperCase().includes(q);});
   if(hasil.length===0){box.innerHTML='<div class="card" style="color:var(--teks-muda)">Tidak ditemukan.</div>';return;}
   box.innerHTML='';
-  hasil.forEach(d=>{
-    const live=hargaLive[d[2]];
-    let harga=live?live.harga:(hargaStatis[d[0]]||0);
-    let persen=live?live.persen:null;
-    const warna=d[3]==='BUY'?var_set('hijau'):d[3]==='SELL'?var_set('merah'):var_set('kuning');
-    const pct=(persen!=null)?' <span style="color:'+(persen>=0?'var(--hijau)':'var(--merah)')+'">('+(persen>=0?'+':'')+persen.toFixed(2)+'%)</span>':' <span style="color:var(--teks-muda)">(statis)</span>';
-    const el=document.createElement('div');
+  hasil.forEach(function(d){
+    var warna=d[3]==='BUY'?var_set('hijau'):d[3]==='SELL'?var_set('merah'):var_set('kuning');
+    var el=document.createElement('div');
     el.className='card';el.style.cursor='pointer';
-    el.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><b>'+d[0]+'</b><span style="color:'+warna+';font-weight:700">'+d[3]+'</span></div><div style="color:var(--teks-muda);font-size:.8rem">'+d[1]+' • Rp '+fmtAngka(harga)+pct+'</div>';
+    el.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><b>'+d[0]+'</b><span style="color:'+warna+';font-weight:700">'+d[3]+'</span></div><div style="color:var(--teks-muda);font-size:.8rem">'+d[1]+' • Rp '+fmtAngka(d[2])+' <span style="color:var(--teks-muda)">(demo)</span></div>';
     box.appendChild(el);
   });
 }
-
-document.getElementById('btn-cari').addEventListener('click',()=>tampilSaham(document.getElementById('scr-cari').value));
-document.getElementById('scr-cari').addEventListener('keyup',e=>{if(e.key==='Enter')tampilSaham(e.target.value);});
+document.getElementById('btn-cari').addEventListener('click',function(){tampilSaham(document.getElementById('scr-cari').value);});
+document.getElementById('scr-cari').addEventListener('keyup',function(e){if(e.key==='Enter')tampilSaham(e.target.value);});
 tampilSaham('');
-muatSemuaHarga();
 
 // ===== CHAT AI =====
 function kirim(){
-  const inp=document.getElementById('chat-input'),v=inp.value.trim();
+  var inp=document.getElementById('chat-input'),v=inp.value.trim();
   if(!v)return;
-  const area=document.getElementById('chat-area');
+  var area=document.getElementById('chat-area');
   area.innerHTML+='<div class="card" style="margin-left:30px;background:var(--bg-card2)"><b>Anda</b><p style="font-size:.9rem">'+v+'</p></div>';
   area.innerHTML+='<div class="card" style="margin-right:30px"><b style="color:var(--aksen)">Asisten</b><p style="font-size:.9rem">Analisis untuk <b>'+v.toUpperCase()+'</b>: tren cenderung menguat. Pertimbangkan manajemen risiko (max 2% per posisi).</p></div>';
   inp.value='';area.scrollTop=area.scrollHeight;
 }
 document.getElementById('btn-kirim').addEventListener('click',kirim);
-document.getElementById('chat-input').addEventListener('keyup',e=>{if(e.key==='Enter')kirim();});
+document.getElementById('chat-input').addEventListener('keyup',function(e){if(e.key==='Enter')kirim();});
 
 // ===== HARGA LANGSUNG TOGGLE =====
-let hls=false;
+var hls=false;
 document.getElementById('lbl-hls').addEventListener('click',function(){hls=!hls;this.textContent=hls?'On':'Off';});
 </script>
 
