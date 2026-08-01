@@ -25,7 +25,6 @@
         a { color: var(--aksen); text-decoration: none; }
         .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
 
-        /* Header */
         header {
             padding: 16px 0;
             border-bottom: 1px solid rgba(255,255,255,0.06);
@@ -57,9 +56,8 @@
             nav ul.open { display: flex; }
         }
 
-        /* Hero kecil */
         .page-hero { padding: 40px 0; text-align: center; }
-        .page-hero h1 { font-size: 2rem; }  
+        .page-hero h1 { font-size: 2rem; }
         .page-hero p { color: var(--teks-muda); max-width: 600px; margin: 8px auto 0; }
         .badge {
             display: inline-block; background: rgba(0,194,255,0.12);
@@ -67,7 +65,6 @@
             font-size: .85rem; font-weight: 600; margin-bottom: 12px;
         }
 
-        /* Daftar fitur */
         section { padding: 30px 0 60px; }
         .fitur-grid {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
@@ -81,7 +78,6 @@
         .fitur-card h3 { margin-bottom: 8px; }
         .fitur-card p { color: var(--teks-muda); font-size: .95rem; }
 
-        /* Kotak khusus widget TradingView */
         .widget-box {
             background: var(--bg-card);
             border: 1px solid rgba(0,194,255,0.3);
@@ -94,19 +90,17 @@
         }
         .widget-box .deskripsi-kotak { color: var(--teks-muda); margin-bottom: 16px; }
 
-        /* Tempat widget TradingView — pastikan tinggi cukup agar grafik tampil penuh */
         .widget-wrap {
             border-radius: 10px; overflow: hidden;
             background: #131722;
-            min-height: 400px;
+            min-height: 420px;
         }
-        .widget-wrap .tradingview-widget-container { height: 400px !important; }
+        .widget-wrap .tradingview-widget-container { height: 420px !important; }
         .widget-wrap .tradingview-widget-container__widget { height: 100% !important; }
     </style>
 </head>
 <body>
 
-    <!-- Header -->
     <header>
         <div class="container nav-wrap">
             <a href="index.html" class="logo">IzyChartAnalisis</a>
@@ -125,7 +119,6 @@
         </div>
     </header>
 
-    <!-- Header Halaman -->
     <div class="page-hero">
         <div class="container">
             <span class="badge">FITUR UNGGULAN</span>
@@ -134,11 +127,9 @@
         </div>
     </div>
 
-    <!-- Daftar Fitur -->
     <section>
         <div class="container">
 
-            <!-- 4 kartu fitur utama -->
             <div class="fitur-grid">
                 <div class="fitur-card">
                     <div class="icon">📈</div>
@@ -162,16 +153,14 @@
                 </div>
             </div>
 
-            <!-- ====== KOTAK GRAFIK SAHAM / IHSG (Widget TradingView) ====== -->
             <div class="widget-box">
                 <div class="judul-kotak">📊 Grafik Harga Saham & IHSG</div>
                 <div class="deskripsi-kotak">
                     Pantau pergerakan harga saham dan Indeks Harga Saham Gabungan (IHSG) secara terkini.
-                    Grafik di bawah ini interaktif, bisa digeser, di-zoom, dan otomatis diperbarui.
+                    Grafik di bawah ini interaktif, lengkap dengan indikator teknikal, bisa digeser dan di-zoom.
                 </div>
 
                 <div class="widget-wrap">
-                    <!-- TradingView Widget - Advanced Chart IHSG -->
                     <div class="tradingview-widget-container" style="height:100%;width:100%;">
                       <div class="tradingview-widget-container__widget" style="height:calc(100% - 32px);width:100%;"></div>
                       <div class="tradingview-widget-copyright">
@@ -181,7 +170,7 @@
                       <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
                       {
                         "autosize": true,
-                        "symbol": "IDX:JKSE",
+                        "symbol": "JKSE",
                         "interval": "60",
                         "timezone": "Asia/Jakarta",
                         "theme": "dark",
@@ -201,7 +190,6 @@
         </div>
     </section>
 
-    <!-- Footer -->
     <footer>
         <div class="container">
             <p style="color:var(--teks-muda); padding:20px 0; text-align:center;">
