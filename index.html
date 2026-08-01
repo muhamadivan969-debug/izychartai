@@ -62,7 +62,6 @@ button{font-family:inherit;cursor:pointer;border:none}
 /* BERBAGAI */
 .tag{display:inline-block;padding:3px 10px;border-radius:50px;font-size:.7rem;font-weight:700}
 .hijau{color:var(--hijau)}.merah{color:var(--merah)}.kuning{color:var(--kuning)}
-.persen-naik{color:var(--hijau)}.persen-turun{color:var(--merah)}
 </style>
 </head>
 <body>
@@ -79,7 +78,7 @@ button{font-family:inherit;cursor:pointer;border:none}
     <label class="chk"><input type="checkbox" id="c1"> Konten bukan nasihat keuangan.</label>
     <label class="chk"><input type="checkbox" id="c2"> Saya paham risiko & potensi kehilangan modal.</label>
     <label class="chk"><input type="checkbox" id="c3"> Saya setuju Syarat & Ketentuan serta Kebijakan Privasi.</label>
-    <button class="btn-lanjut" id="btn-lanjut" disabled>Saya Mengerti dan Lanjutkan</button>
+    <button class="btn-lanjut" id="btn-lanjut" disabled onclick="document.getElementById('disclaimer').style.display='none'">Saya Mengerti dan Lanjutkan</button>
   </div>
 </div>
 
@@ -146,14 +145,13 @@ button{font-family:inherit;cursor:pointer;border:none}
       <button class="btn-pil" style="flex:0 0 auto;background:var(--aksen);color:#06121A;font-weight:700" id="btn-grafik">Buka</button>
     </div>
 
-    <!-- Container grafik dinamis -->
     <div class="card" style="padding:0;overflow:hidden;border-radius:14px">
       <div id="chart-wrap" style="height:420px;width:100%"></div>
       <div style="padding:6px 12px;background:var(--bg-card2);font-size:.75rem;color:var(--teks-muda)">
         Data & grafik oleh <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank"><span style="color:#3BB3E4">TradingView</span></a>
       </div>
     </div>
-    <p style="color:var(--teks-muda);font-size:.78rem;margin-top:8px;display:none" id="chart-note">💡 Indikator teknikal (RSI, MACD, dll.) tersedia di toolbar grafik.</p>
+    <p style="color:var(--teks-muda);font-size:.78rem;margin-top:8px">💡 Indikator teknikal (RSI, MACD, dll.) tersedia di toolbar grafik.</p>
   </div>
 </div>
 
@@ -173,7 +171,7 @@ button{font-family:inherit;cursor:pointer;border:none}
         <span style="color:var(--teks-muda);font-size:.75rem">Hari ini</span>
       </div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;font-size:.8rem">
-        <div style="background:var(--bg-card2);padding:8px;border-radius:8px;text-align:center"><b style="color:var(--aksen)">ENTRY</b><br class="sig-entry">1.725</div>
+        <div style="background:var(--bg-card2);padding:8px;border-radius:8px;text-align:center"><b style="color:var(--aksen)">ENTRY</b><br>1.725</div>
         <div style="background:var(--bg-card2);padding:8px;border-radius:8px;text-align:center"><b style="color:var(--merah)">SL</b><br>1.700</div>
         <div style="background:var(--bg-card2);padding:8px;border-radius:8px;text-align:center"><b style="color:var(--hijau)">TP1</b><br>1.760</div>
       </div>
@@ -323,7 +321,6 @@ button{font-family:inherit;cursor:pointer;border:none}
 const c1=document.getElementById('c1'),c2=document.getElementById('c2'),c3=document.getElementById('c3'),bL=document.getElementById('btn-lanjut');
 function cek(){bL.disabled=!(c1.checked&&c2.checked&&c3.checked)}
 [c1,c2,c3].forEach(c=>c.addEventListener('change',cek));
-bL.addEventListener('click',()=>document.getElementById('disclaimer').style.display='none');
 
 // ===== NAVIGASI BOTTOM =====
 document.querySelectorAll('.nav-item').forEach(btn=>{
@@ -353,37 +350,22 @@ document.getElementById('btn-analisis').addEventListener('click',()=>{
   document.getElementById('hasil-analisis').style.display='block';
 });
 
-// ============================================================
-// GRAFIK — TradingView (simbol default stabil: TVC:JKSE = IHSG)
-// ============================================================
-let simbolSekarang='TVC:JKSE';  // IHSG
+// ===== GRAFIK — TradingView (simbol default stabil: TVC:JKSE) =====
 function muatGrafik(simbol){
   const wrap=document.getElementById('chart-wrap');
-  simbolSekarang=simbol||'TVC:JKSE';
-  // bersihkan kontainer & tulis HTML widget baru (reload chart dengan simbol)
-  wrap.innerHTML=`
-    <div class="tradingview-widget-container" style="height:420px;width:100%">
-      <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
-      <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
-      {"autosize":true,"symbol":"${simbolSekarang}","interval":"D","timezone":"Asia/Jakarta","theme":"dark","style":"1","locale":"id","allow_symbol_change":true,"details":true,"hotlist":false,"calendar":false,"support_host":"https://www.tradingview.com"}
-      <\/script>
-    </div>`;
+  const sy=simbol||'TVC:JKSE';
+  wrap.innerHTML=`<div class="tradingview-widget-container" style="height:420px;width:100%"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
+  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>{"autosize":true,"symbol":"${sy}","interval":"D","timezone":"Asia/Jakarta","theme":"dark","style":"1","locale":"id","allow_symbol_change":true,"details":true,"hotlist":false,"calendar":false,"support_host":"https://www.tradingview.com"}<\/script></div>`;
 }
-// tombol BUka
 document.getElementById('btn-grafik').addEventListener('click',()=>{
   const s=document.getElementById('chart-simbol').value.trim().toUpperCase();
-  // jika kosong -> default IHSG; jika user ketik -> pakai IDX:<kode> (saham ID)
-  const simbol=s ? ('IDX:'+s) : 'TVC:JKSE';
+  const simbol=s?('IDX:'+s):'TVC:JKSE';
   muatGrafik(simbol);
   document.getElementById('chart-simbol').value='';
 });
-// muat grafik default saat halaman buka
 muatGrafik('TVC:JKSE');
 
-// ============================================================
-// SCREENER — Harga live dari YAHOO FINANCE (gratis, tanpa key)
-//            + fallback ke harga statis jika gagal
-// ============================================================
+// ===== SCREENER — harga live Yahoo Finance + fallback statis =====
 const daftar=[
   ['BBRI','Bank Rakyat Indonesia','BBRI.JK','BUY'],
   ['BBCA','Bank Central Asia','BBCA.JK','BUY'],
@@ -401,50 +383,34 @@ const daftar=[
   ['PGAS','Gas Negara','PGAS.JK','HOLD'],
   ['PTBA','Bukit Asam','PTBA.JK','SELL']
 ];
-// harga statis (fallback bila API gagal / offline)
-let hargaStatis={BBRI:1725,BBCA:9900,BMRI:7350,TLKM:3410,ASII:5175,TPIA:6875,GOTO:95,BBNI:5800,MYOR:2380,ICBP:11200,KLBF:1650,UNVR:2900,ADRO:2260,PGAS:1390,PTBA:2850};
-// cache harga live global
-let hargaLive={};
-let statusSumber='ok';
+const hargaStatis={BBRI:1725,BBCA:9900,BMRI:7350,TLKM:3410,ASII:5175,TPIA:6875,GOTO:95,BBNI:5800,MYOR:2380,ICBP:11200,KLBF:1650,UNVR:2900,ADRO:2260,PGAS:1390,PTBA:2850};
+const hargaLive={};
 
 function var_set(key){return getComputedStyle(document.documentElement).getPropertyValue('--'+key).trim();}
+function fmtAngka(n){if(n==null||isNaN(n))return '-';return n.toLocaleString('id-ID');}
 
-// Format angka harga: 1725 -> "1.725", 9900 -> "9.900"
-function fmtAngka(n){
-  if(n==null||isNaN(n))return '-';
-  return n.toLocaleString('id-ID');
-}
-
-// Ambil harga live dari Yahoo Finance untuk satu kode, simpan ke hargaLive
-async function ambilHarga(kodeJK, nama){
+async function ambilHarga(kodeJK){
   try{
-    const url='https://query1.finance.yahoo.com/v7/finance/quote?symbols='+encodeURIComponent(kodeJK)+'&fields=regularMarketPrice,regularMarketChangePercent';
+    const url='https://query1.finance.yahoo.com/v7/finance/quote?symbols='+encodeURIComponent(kodeJK)+'&fields=regularMarketPrice,regularMarketChangePercent,shortName';
     const r=await fetch(url,{mode:'cors'});
     const j=await r.json();
     const q=j&&j.quoteResponse&&j.quoteResponse.result&&j.quoteResponse.result[0];
     if(q&&q.regularMarketPrice!=null){
-      hargaLive[nama]={
-        harga:q.regularMarketPrice,
-        persen:q.regularMarketChangePercent
-      };
+      hargaLive[kodeJK]={harga:q.regularMarketPrice,persen:q.regularMarketChangePercent};
       return true;
     }
-  }catch(e){/* lanjutkan */}
+  }catch(e){}
   return false;
 }
 
-// Muat semua harga live secara paralel
 async function muatSemuaHarga(){
   const st=document.getElementById('scr-status');
   st.textContent='⏳ Memuat harga terbaru (Yahoo Finance)...';
-  // ambil semua sekaligus
   const results=await Promise.all(daftar.map(d=>ambilHarga(d[2])));
   const sukses=results.filter(x=>x).length;
   if(sukses>0){
-    statusSumber='ok';
-    st.textContent='✅ '+sukses+' dari '+daftar.length+' harga diperbarui dari data pasar. (Perbarui halaman untuk update.)';
+    st.textContent='✅ '+sukses+' dari '+daftar.length+' harga diperbarui dari data pasar. (Gunakan pencarian atau refresh untuk data baru.)';
   }else{
-    statusSumber='offline';
     st.textContent='⚠️ Data live tidak dapat diambil. Menampilkan data statis (demo).';
   }
   tampilSaham('');
@@ -453,41 +419,28 @@ async function muatSemuaHarga(){
 function tampilSaham(filter){
   const box=document.getElementById('daftar-saham');
   const q=(filter||'').toUpperCase();
-  const hasil=daftar.filter(s=>s[0].includes(q)||s[①](https://www.piwheels.org/simple/).toUpperCase().includes(q));
+  const hasil=daftar.filter(s=>s[0].includes(q)||s[1].toUpperCase().includes(q));
   if(hasil.length===0){box.innerHTML='<div class="card" style="color:var(--teks-muda)">Tidak ditemukan.</div>';return;}
   box.innerHTML='';
   hasil.forEach(d=>{
-    const nama=d[0];
-    let harga,persen;
-    // pakai harga live jika ada, else fallback statis
-    if(hargaLive[nama]){
-      harga=hargaLive[nama].harga;
-      persen=hargaLive[nama].persen;
-    }else{
-      harga=hargaStatis[nama]||0;
-      persen=null;
-    }
+    const live=hargaLive[d[2]];
+    let harga=live?live.harga:(hargaStatis[d[0]]||0);
+    let persen=live?live.persen:null;
     const warna=d[3]==='BUY'?var_set('hijau'):d[3]==='SELL'?var_set('merah'):var_set('kuning');
-    const pctHtml=(persen!=null)
-      ? ' <span style="color:'+(persen>=0?'var(--hijau)':'var(--merah)')+'">('+ (persen>=0?'+':'') +persen.toFixed(2)+'%)</span>'
-      : ' <span style="color:var(--teks-muda)">(statis)</span>';
+    const pct=(persen!=null)?' <span style="color:'+(persen>=0?'var(--hijau)':'var(--merah)')+'">('+(persen>=0?'+':'')+persen.toFixed(2)+'%)</span>':' <span style="color:var(--teks-muda)">(statis)</span>';
     const el=document.createElement('div');
     el.className='card';el.style.cursor='pointer';
-    el.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><b>'+d[0]+'</b><span style="color:'+warna+';font-weight:700">'+d[3]+'</span></div><div style="color:var(--teks-muda);font-size:.8rem">'+d[①](https://www.piwheels.org/simple/)+' • Rp '+fmtAngka(harga)+pctHtml+'</div>';
+    el.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><b>'+d[0]+'</b><span style="color:'+warna+';font-weight:700">'+d[3]+'</span></div><div style="color:var(--teks-muda);font-size:.8rem">'+d[1]+' • Rp '+fmtAngka(harga)+pct+'</div>';
     box.appendChild(el);
   });
 }
 
 document.getElementById('btn-cari').addEventListener('click',()=>tampilSaham(document.getElementById('scr-cari').value));
 document.getElementById('scr-cari').addEventListener('keyup',e=>{if(e.key==='Enter')tampilSaham(e.target.value);});
-
-// jalankan saat halaman siap
 tampilSaham('');
 muatSemuaHarga();
 
 // ===== CHAT AI =====
-document.getElementById('btn-kirim').addEventListener('click',kirim);
-document.getElementById('chat-input').addEventListener('keyup',e=>{if(e.key==='Enter')kirim();});
 function kirim(){
   const inp=document.getElementById('chat-input'),v=inp.value.trim();
   if(!v)return;
@@ -496,6 +449,8 @@ function kirim(){
   area.innerHTML+='<div class="card" style="margin-right:30px"><b style="color:var(--aksen)">Asisten</b><p style="font-size:.9rem">Analisis untuk <b>'+v.toUpperCase()+'</b>: tren cenderung menguat. Pertimbangkan manajemen risiko (max 2% per posisi).</p></div>';
   inp.value='';area.scrollTop=area.scrollHeight;
 }
+document.getElementById('btn-kirim').addEventListener('click',kirim);
+document.getElementById('chat-input').addEventListener('keyup',e=>{if(e.key==='Enter')kirim();});
 
 // ===== HARGA LANGSUNG TOGGLE =====
 let hls=false;
