@@ -35,19 +35,15 @@ button,.btn-pil,.btn-utama{pointer-events:auto !important;cursor:pointer;touch-a
 ul{margin:8px 0 8px 18px}
 .progg{height:8px;background:#1A2235;border-radius:50px;overflow:hidden;margin-top:6px}
 .progg>div{height:100%;background:linear-gradient(90deg,#00C2FF,#00E0C6)}
-/* error inline + toast */
 .err{color:#FF5252;font-size:.78rem;margin-top:6px;display:none}
 .toast{position:fixed;bottom:96px;left:50%;transform:translateX(-50%);background:#00C676;color:#06121A;font-weight:700;padding:10px 18px;border-radius:10px;z-index:99999;font-size:.85rem;box-shadow:0 4px 16px rgba(0,198,118,.4);display:none;max-width:90%;text-align:center}
-/* accordion */
 .acc-head{display:flex;justify-content:space-between;align-items:center;cursor:pointer;padding:14px 16px;background:#151B2B;border:1px solid rgba(255,255,255,.08);border-radius:12px;margin-bottom:8px;font-weight:700}
 .acc-body{display:none;background:#1A2235;border-radius:12px;padding:14px;margin:-4px 0 12px;font-size:.85rem;border:1px solid rgba(0,194,255,.2)}
 .acc-body.open{display:block}
-/* chart dropdown modal scrollable */
 .ch-menu{max-height:140px;overflow-y:auto;background:#1A2235;border-radius:10px;border:1px solid rgba(255,255,255,.12);margin-bottom:8px}
 .ch-menu button{display:block;width:100%;background:none;color:#EAEDF3;text-align:left;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.06)}
 .ch-menu button:last-child{border:none}
 .ch-menu button.pilih{background:#0e2a3a;color:#00C2FF;font-weight:700}
-/* chat */
 #chat-area{display:flex;flex-direction:column;gap:10px}
 </style>
 </head>
@@ -88,6 +84,10 @@ ul{margin:8px 0 8px 18px}
 <li>Butuh pengelolaan risiko paling ketat.</li></ul>
 </div>
 </div>
+
+<!-- ===== REKOMENDASI BESOK ===== -->
+<div class="sec-t">🎯 Rekomendasi Beli Besok (Update 19:22)</div>
+<div id="recom-box"></div>
 
 <div class="sec-t">Cari Saham</div>
 <input class="input uc" id="in-search" placeholder="Ketik kode, mis: BBRI / BBCA / TPIA">
@@ -228,44 +228,65 @@ ul{margin:8px 0 8px 18px}
 <div class="toast" id="toast"></div>
 
 <script>
-/* ================= SINGLE SOURCE OF TRUTH =================
-   Format: [kode, nama, sektor, harga, perubahan%, sinyal, entry, sl, t1, t2] */
-var SAHAM=[
-["BBRI","Bank Rakyat Indonesia","Perbankan",5400,0.8,"BUY",5300,5240,5500,5700],
-["BBCA","Bank Central Asia","Perbankan",9900,1.1,"BUY",9700,9580,10200,10500],
-["BMRI","Bank Mandiri","Perbankan",7350,0.5,"BUY",7200,7100,7600,7900],
-["TLKM","Telkom Indonesia","Telekomunikasi",3410,-0.3,"HOLD",3380,3300,3520,3650],
-["ASII","Astra International","Otomotif",5175,0.2,"HOLD",5100,4980,5320,5480],
-["TPIA","Chandra Asri","Petrokimia",6875,-1.4,"SELL",6900,7050,6600,6400],
-["GOTO","GoTo Gojek","Teknologi",95,0.0,"HOLD",94,90,98,102],
-["BBNI","Bank Negara Indonesia","Perbankan",5800,0.7,"BUY",5700,5620,5940,6150],
-["MYOR","Mayora Indah","Konsumsi",2380,0.4,"BUY",2330,2260,2450,2550],
-["ICBP","Indofood CBP","Konsumsi",11200,0.1,"HOLD",11000,10700,11600,12000],
-["KLBF","Kalbe Farma","Farmasi",1650,0.6,"BUY",1610,1570,1720,1780],
-["UNVR","Unilever","Konsumsi",2900,0.3,"BUY",2840,2760,3020,3150],
-["ADRO","Alamtri Resources","Energi",2260,1.2,"BUY",2200,2140,2360,2450],
-["PGAS","Gas Negara","Energi",1390,-0.1,"HOLD",1370,1330,1440,1500],
-["PTBA","Bukit Asam","Batu Bara",2850,-0.9,"SELL",2870,2940,2750,2650],
-["ANTM","Aneka Tambang","Mineral",1690,1.5,"BUY",1650,1600,1760,1830],
-["INCO","Vale Indonesia","Mineral",4100,0.9,"BUY",4000,3900,4280,4450],
-["SMGR","Semen Indonesia","Konstruksi",1250,-0.2,"HOLD",1230,1200,1300,1350],
-["ACES","Ace Hardware","Ritel",1010,0.5,"BUY",990,960,1060,1100],
-["HOKI","Sumber Alfaria","Ritel",2620,0.4,"BUY",2570,2500,2720,2830],
-["EXCL","XL Axiata","Telekomunikasi",2480,-0.4,"HOLD",2450,2390,2560,2650],
-["ISAT","Indosat","Telekomunikasi",14280,1.3,"BUY",13900,13600,14800,15400],
-["MEDC","Medco Energi","Energi",1410,0.8,"BUY",1370,1330,1480,1550],
-["SIDO","Sido Muncul","Farmasi",625,0.3,"BUY",610,595,650,675],
-["BRPT","Barito Pacific","Petrokimia",1055,-0.6,"HOLD",1040,1010,1100,1150],
-["MAPI","Mitra Adiperkasa","Ritel",2150,0.7,"BUY",2100,2050,2260,2350],
-["WIKA","Wijaya Karya","Konstruksi",595,-0.5,"HOLD",590,570,620,645],
-["PTPP","PP Persero","Konstruksi",1080,-0.3,"HOLD",1060,1030,1120,1170]
-];
+/* ===== KONFIGURASI ===== */
+var SAHAM=[];
+var SAHAM_LOADED=false;
+var URL_BACKEND='https://script.google.com/macros/s/AKfycbxMFK9DSJ6UilmTkSdI8ouiwC93nXGMV3UEwku8Qfr9Ir4Rq8rE30t7cy8BtSUHuWiGcQ/exec';
+
+/* ===== SYNC DATA REALTIME ===== */
+function syncSAHAM(list){
+  SAHAM=[];
+  (list||[]).forEach(function(it){
+    if(!it||it.error)return;
+    var k=it.tiker.replace('.JK','');
+    var prev=it.prev||it.harga;
+    var persen=it.persen!==undefined?it.persen:(prev>0?((it.harga-prev)/prev*100):0);
+    var range=it.harga*0.02;
+    SAHAM.push([k,k,'-',it.harga,Math.round(persen*100)/100,it.sinyal||'HOLD',
+      Math.round(it.harga-range),Math.round(it.harga-range*2),
+      Math.round(it.harga+range),Math.round(it.harga+range*2)]);
+  });
+  SAHAM_LOADED=true;
+  if(document.getElementById("daftar"))tampilSaham("");
+  if(document.getElementById("sin-list"))tampilSinyal("Large Cap");
+}
+
+/* ===== MUAT DATA + REKOMENDASI ===== */
+function muatData(){
+  fetch(URL_BACKEND).then(function(r){return r.json();}).then(function(d){
+    if(d.error)return;
+    if(d.ihsg)tampilIHSG(d.ihsg);
+    if(d.saham&&d.saham.length)syncSAHAM(d.saham);
+    if(d.rekomendasi_besok)tampilRekomendasi(d.rekomendasi_besok);
+  }).catch(function(){});
+}
+function tampilIHSG(h){
+  var el=document.getElementById("recom-box");if(!el)return;
+  var naik=h.persen>=0;
+  el.insertAdjacentHTML("afterbegin",
+    '<div class="card" style="background:linear-gradient(135deg,#16204a,#151B2B);margin-bottom:10px">'
+    +'<b class="ac">IHSG</b> <span class="kecil" style="color:#A7B0C3">close hari ini</span><br>'
+    +'<b style="font-size:1.3rem">'+fmt(h.harga)+'</b> '
+    +'<span style="color:'+(naik?"#00E676":"#FF5252")+'">'+(naik?"▲ +":"▼ ")+h.persen+'%</span></div>');
+}
+function tampilRekomendasi(list){
+  var box=document.getElementById("recom-box");if(!box)return;
+  var html='';
+  list.forEach(function(r){
+    html+='<div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><b>'+r.tiker.replace('.JK','')+'</b>'
+    +'<span class="tag" style="background:rgba(0,230,118,.15);color:#00E676">'+r.sinyal+'</span></div>'
+    +'<div class="kecil" style="color:#A7B0C3;margin-top:3px">Rp '+fmt(r.harga)+' <b style="color:'+(r.persen>=0?"#00E676":"#FF5252")+'">'+(r.persen>=0?"+":"")+r.persen+'%</b></div></div>';
+  });
+  box.insertAdjacentHTML("beforeend",html||'<div class="card kecil" style="color:#A7B0C3">Belum ada data. Tunggu update jam 19:22.</div>');
+}
+
+/* ===== FUNGSI DASAR ===== */
 function cariSaham(k){return SAHAM.find(function(s){return s[0]===k.toUpperCase();});}
 function warna(sig){return sig==="BUY"?"#00E676":sig==="SELL"?"#FF5252":"#FFC400";}
-function fmt(n){return n.toLocaleString("id-ID");}
+function fmt(n){return Number(n||0).toLocaleString("id-ID");}
 function sigLabel(sig){return sig==="BUY"?"BUY":sig==="SELL"?"SELL":"HOLD";}
 
-/* ================= NAVIGASI ================= */
+/* ===== NAVIGASI ===== */
 function bukaPanel(id,tp,btn){
   document.querySelectorAll(".panel").forEach(function(p){p.classList.remove("aktif");});
   var el=document.getElementById(id);if(el)el.classList.add("aktif");
@@ -280,7 +301,7 @@ function bukaPanel(id,tp,btn){
 }
 function kembali(){bukaPanel("p-lainnya","nav");}
 
-/* ================= TIPE INVESTOR (dengan alasan) ================= */
+/* ===== TIPE INVESTOR ===== */
 function tipePilih(btn,idDesc){
   var row=btn.parentNode;
   row.querySelectorAll(".btn-pil").forEach(function(b){b.classList.remove("pilih");});
@@ -289,7 +310,7 @@ function tipePilih(btn,idDesc){
   var d=document.getElementById(idDesc);if(d)d.classList.add("show");
 }
 
-/* ================= ANALISIS DINAMIS ================= */
+/* ===== ANALISIS ===== */
 function kartuHasil(s){
   return '<div style="display:flex;justify-content:space-between;align-items:center">'
   +'<b style="font-size:1.2rem">'+s[0]+'</b>'
@@ -309,16 +330,16 @@ function analisis(){
   var hasil=document.getElementById("hasil");
   var hasilKartu=document.getElementById("hasil-kartu");
   if(s){hasilKartu.innerHTML=kartuHasil(s);}
-  else{hasilKartu.innerHTML='<div class="card kecil" style="color:#FF5252;border-color:rgba(255,82,82,.4)">⚠️ Kode "'+v+'" tidak ditemukan. Coba BBRI, BBCA, TPIA.</div>';}
+  else{hasilKartu.innerHTML='<div class="card kecil" style="color:#FF5252;border-color:rgba(255,82,82,.4)">⚠️ Kode "'+v+'" tidak ditemukan.</div>';}
   hasil.classList.remove("hidden");
   simpanRiwayat(v);
 }
 
-/* ================= RIWAYAT + DEBOUNCE ================= */
+/* ===== RIWAYAT ===== */
 var lastQ="",lastT=0;
 function simpanRiwayat(k){
   var now=Date.now();
-  if(k===lastQ && now-lastT<1500){return;} // debounce cegah duplikat
+  if(k===lastQ&&now-lastT<1500){return;}
   lastQ=k;lastT=now;
   var r=JSON.parse(localStorage.getItem("iz_riwayat")||"[]");
   r.unshift({simbol:k,waktu:new Date().toLocaleString("id-ID")});
@@ -327,16 +348,16 @@ function simpanRiwayat(k){
 function tampilRiwayat(){
   var box=document.getElementById("riwayat-list");
   var r=JSON.parse(localStorage.getItem("iz_riwayat")||"[]");
-  if(!r.length){box.innerHTML='<div class="card kecil" style="color:#A7B0C3">Belum ada riwayat. Coba analisis saham di Beranda.</div>';return;}
+  if(!r.length){box.innerHTML='<div class="card kecil" style="color:#A7B0C3">Belum ada riwayat.</div>';return;}
   box.innerHTML="";
   r.slice(0,30).forEach(function(rm){box.innerHTML+='<div class="card"><b>'+rm.simbol+'</b><div class="kecil" style="color:#A7B0C3">'+rm.waktu+'</div></div>';});
 }
 function bersihRiwayat(){localStorage.removeItem("iz_riwayat");tampilRiwayat();toast("🗑️ Riwayat dihapus.");}
 
-/* ================= GRAFIK ================= */
+/* ===== GRAFIK ===== */
 function bukaGrafik(){var s=document.getElementById("ch-in").value.trim().toUpperCase()||"JKSE";document.getElementById("ch-fr").src="https://s.tradingview.com/widgetembed/?symbol="+s+"&interval=D&theme=dark&style=1&lang=id&timezone=Asia%2FJakarta";}
 
-/* ================= SINYAL ================= */
+/* ===== SINYAL ===== */
 function sinyalTab(btn,nama){document.querySelectorAll("#p-sinyal .btn-pil").forEach(function(b){b.classList.remove("pilih");});btn.classList.add("pilih");tampilSinyal(nama);}
 function tampilSinyal(kat){
   var cap={"Large Cap":["BBRI","BBCA","BMRI","TLKM","ASII"],"Mid Cap":["BBNI","KLBF","ICBP","ADRO","EXCL"],"Small Cap":["SIDO","ANTM","MEDC","ACES","MAPI"]};
@@ -349,13 +370,13 @@ function tampilSinyal(kat){
   });
 }
 
-/* ================= SCREENER (Last Price + % + sektor + sinyal konsisten) ================= */
+/* ===== SCREENER ===== */
 function tampilSaham(q){
   var query=(q||"").toUpperCase();
   var r=query?SAHAM.filter(function(s){return s[0].includes(query)||s[1].toUpperCase().includes(query)||s[2].toUpperCase().includes(query);}):SAHAM;
   document.getElementById("scr-info").textContent=r.length+" saham Indonesia";
   var box=document.getElementById("daftar");
-  if(!r.length){box.innerHTML='<div class="card kecil" style="color:#A7B0C3">Tidak ditemukan. Coba kode/nama/sektor lain.</div>';return;}
+  if(!r.length){box.innerHTML='<div class="card kecil" style="color:#A7B0C3">Tidak ditemukan atau belum muat data.</div>';return;}
   box.innerHTML="";
   r.forEach(function(s){
     var naik=s[4]>=0;
@@ -364,7 +385,7 @@ function tampilSaham(q){
   });
 }
 
-/* ================= BANDARMOLOGY (istilah standar) ================= */
+/* ===== BANDAR ===== */
 function tampilBandar(){
   var bd=[["BBRI","Big Accum"],["BBCA","Big Accum"],["BMRI","Big Accum"],["TLKM","Big Accum"],["ASII","Neutral"],["PGAS","Big Dist"],["PTBA","Big Dist"],["ANTM","Market Maker"],["EXCL","Market Maker"],["SIDO","Neutral"]];
   var box=document.getElementById("bd-list");box.innerHTML="";
@@ -374,7 +395,7 @@ function tampilBandar(){
   });
 }
 
-/* ================= EDU (accordion berfungsi) ================= */
+/* ===== EDU ===== */
 var EDU=[["📘 Fundamental Saham",["PER: valuasi harga vs laba","PBV: harga vs nilai buku","ROE: efisiensi laba","Dividend Yield: imbal hasil"]],
 ["📈 Technical Analysis",["Support & Resistance","Candlestick","Volume","Trend"]],
 ["📊 Indikator Teknikal",["RSI: momentum","MACD: arah tren","Bollinger Bands: volatilitas"]],
@@ -390,7 +411,6 @@ function tampilEdu(){
 function bukaAcc(i){
   var b=document.getElementById("acc"+i);
   if(b.classList.contains("open")){b.classList.remove("open");return;}
-  // tutup semua
   document.querySelectorAll(".acc-body").forEach(function(x){x.classList.remove("open");});
   var isi="<ul>";
   EDU[i][1].forEach(function(t){isi+="<li>"+t+"</li>";});
@@ -398,23 +418,23 @@ function bukaAcc(i){
   b.innerHTML=isi;b.classList.add("open");
 }
 
-/* ================= CHAT AI (lebih cerdas + auto scroll) ================= */
+/* ===== CHAT AI ===== */
 function jwb(v){
   var x=v.toLowerCase();
-  if(/(bbri|bbca|bca|mandiri|bumn|perbankan|bank)/.test(x))return "Sektor perbankan umumnya likuid & stabil. Contoh: BBRI (Rp 5.400), BBCA (Rp 9.900), BMRI (Rp 7.350) — ketiganya berrekomendasi BUY dengan fundamental solid.";
-  if(/(tpia|chandra)/.test(x))return "TPIA (Chandra Asri) saat ini berrekomendasi SELL — harga sedang di bawah tekanan dengan tren menurun. Pertimbangkan menunggu stabilisasi sebelum masuk.";
-  if(/rsi/.test(x))return "RSI mengukur momentum (0-100). Di atas 70 = overbought/berpotensi koreksi; di bawah 30 = oversold/berpotensi rebound. Perhatikan juga divergensi.";
-  if(/macd/.test(x))return "MACD melihat momentum & arah tren. Perpotongan MACD di atas signal = bullish, di bawah = bearish. Cocok dipakai pada timeframe D1/H4.";
-  if(/scalping/.test(x))return "Scalping: holding detik-menit di saham sangat likuid, target profit kecil tapi diulang. Butuh fokus & eksekusi cepat.";
-  if(/swing/.test(x))return "Swing: holding hari-minggu menangkap tren menengah. Pas untuk yang tidak bisa pantau terus, analisis cukup 1-2x/hari.";
-  if(/day\b|day trading/.test(x))return "Day trading: semua posisi ditutup sebelum pasar tutup untuk hindari gap semalam. Wajib stop-loss karena intraday volatil.";
-  if(/risiko|risk|manajemen/.test(x))return "Aturan emas: risikokan maks 1-2% modal per transaksi. Selalu pasang stop-loss. Tanpa ini, strategi terbaik pun bisa merugi besar.";
-  if(/support|resistance/.test(x))return "Support = lantai harga (kandidat beli), Resistance = plafon (kandidat jual). Breakout resistance bisa menandakan lanjut naik.";
-  if(/fundamental|per|pbv|roe|dividen/.test(x))return "Fundamental: PER rendah = murah, PBV menilai harga vs nilai buku, ROE tinggi = efisien. Perbankan (BBRI, BBCA) punya ROE & dividen menarik.";
-  if(/sentimen|fear|greed/.test(x))return "Sentimen mengukur psikologi pasar. Greedy ekstrem = rawan koreksi; Fear ekstrem = potensi rebound. Lawan arah kerumunan.";
-  if(/bandar|bandarmolog|institusi/.test(x))return "Bandarmology melacak aksi smart money. Big Accum = akumulasi besar (bullish); Big Dist = distribusi besar (bearish); Market Maker = pembuat pasar.";
-  if(/halo|hai|hi|assalam|pagi|siang|malam|bantu|help|terima kasih|makasih/.test(x))return "Halo! 👋 Saya asisten saham Indonesia. Coba tanya: 'apa itu RSI?', 'jelaskan scalping', 'saham perbankan bagus?', atau 'bagaimana manajemen risiko?'";
-  return "Untuk analisis saham, perhatikan 3 hal: teknikal (tren, support/resistance, indikator), fundamental (PER, ROE, dividen), dan manajemen risiko (maks 2% per posisi). Sebutkan kode saham atau topik spesifik agar saya bisa menjawab lebih detail.";
+  if(/(bbri|bbca|bca|mandiri|bumn|perbankan|bank)/.test(x))return "Sektor perbankan umumnya likuid & stabil. Contoh: BBRI, BBCA, BMRI.";
+  if(/(tpia|chandra)/.test(x))return "TPIA (Chandra Asri) — perhatikan tren & support sebelum masuk.";
+  if(/rsi/.test(x))return "RSI mengukur momentum (0-100). Di atas 70 = overbought; di bawah 30 = oversold.";
+  if(/macd/.test(x))return "MACD melihat momentum & arah tren. Perpotongan di atas signal = bullish, di bawah = bearish.";
+  if(/scalping/.test(x))return "Scalping: holding detik-menit di saham very likuid, target profit kecil tapi diulang. Butuh fokus & eksekusi cepat.";
+  if(/swing/.test(x))return "Swing: holding hari-minggu menangkap tren menengah. Pas untuk yang tidak bisa pantau terus.";
+  if(/day\b|day trading/.test(x))return "Day trading: semua posisi ditutup sebelum pasar tutup untuk hindari gap semalam. Wajib stop-loss.";
+  if(/risiko|risk|manajemen/.test(x))return "Aturan emas: risikokan maks 1-2% modal per transaksi. Selalu pasang stop-loss.";
+  if(/support|resistance/.test(x))return "Support = lantai harga (kandidat beli), Resistance = plafon (kandidat jual).";
+  if(/fundamental|per|pbv|roe|dividen/.test(x))return "Fundamental: PER rendah = murah, PBV menilai harga vs nilai buku, ROE tinggi = efisien.";
+  if(/sentimen|fear|greed/.test(x))return "Sentimen mengukur psikologi pasar. Greedy ekstrem = rawan koreksi; Fear ekstrem = potensi rebound.";
+  if(/bandar|bandarmolog|institusi/.test(x))return "Bandarmology melacak aksi smart money. Big Accum = bullish; Big Dist = bearish; Market Maker = pembuat pasar.";
+  if(/halo|hai|hi|assalam|pagi|siang|malam|bantu|help|terima kasih|makasih/.test(x))return "Halo! 👋 Saya asisten saham Indonesia. Coba tanya: 'apa itu RSI?', 'jelaskan scalping', atau 'saham perbankan?', 'manajemen risiko?'";
+  return "Untuk analisis saham, perhatikan teknikal, fundamental, dan manajemen risiko. Sebutkan kode saham atau topik agar saya bisa menjawab lebih detail.";
 }
 function kirim(){
   var i=document.getElementById("chat-in"),v=i.value.trim();if(!v)return;
@@ -423,18 +443,17 @@ function kirim(){
   var bot=document.createElement("div");bot.className="card";bot.style.cssText="margin-right:28px";bot.innerHTML="<b class='ac'>Asisten</b><p class='kecil'>"+jwb(v)+"</p>";
   a.appendChild(user);a.appendChild(bot);
   i.value="";
-  // auto scroll ke bawah
   a.scrollIntoView({behavior:"smooth",block:"end"});
 }
 
-/* ================= ALERT (tanpa alert(), pakai inline error + toast) ================= */
+/* ===== ALERT ===== */
 function tampilAlert(){
   var box=document.getElementById("alert-list");
   var a=JSON.parse(localStorage.getItem("iz_alert")||"[]");
   if(!a.length){box.innerHTML='<div class="card kecil" style="color:#A7B0C3">Belum ada peringatan.</div>';return;}
   box.innerHTML="";
   a.forEach(function(al,i){
-    box.innerHTML+='<div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><b>'+al.kode+'</b> '+(al.tipe==="atas"?"Tembus Ke Atas (>=)":"Tembus Ke Bawah (<=)")+' <b class="ac">Rp '+fmt(al.nilai)+'</b><button style="background:#FF5252;color:#fff;padding:6px 12px;border-radius:8px;font-size:.75rem" onclick="hapusAlert('+i+')">Hapus</button></div></div>';
+    box.innerHTML+='<div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><b>'+al.kode+'</b> '+(al.tipe==="atas"?"Tembus ke Atas (>=)":"Tembus ke Bawah (<=)")+' <b class="ac">Rp '+fmt(al.nilai)+'</b><button style="background:#FF5252;color:#fff;padding:6px 12px;border-radius:8px;font-size:.75rem" onclick="hapusAlert('+i+')">Hapus</button></div></div>';
   });
 }
 function hapusAlert(i){var a=JSON.parse(localStorage.getItem("iz_alert")||"[]");a.splice(i,1);localStorage.setItem("iz_alert",JSON.stringify(a));tampilAlert();toast("🗑️ Peringatan dihapus.");}
@@ -452,27 +471,28 @@ function tambahAlert(){
   tampilAlert();toast("🔔 Peringatan disimpan untuk "+k+".");
 }
 
-/* ================= PENGATURAN (validasi email regex) ================= */
+/* ===== PENGATURAN ===== */
 function simpanProfil(){
   var nm=document.getElementById("set-nama").value.trim();
   var em=document.getElementById("set-email").value.trim();
   var err=document.getElementById("err-email");
   var re=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if(em && !re.test(em)){err.style.display="block";document.getElementById("msg-profil").textContent="";return;}
+  if(em&&!re.test(em)){err.style.display="block";document.getElementById("msg-profil").textContent="";return;}
   err.style.display="none";
   if(nm||em){localStorage.setItem("iz_profil",JSON.stringify({nama:nm,email:em}));document.getElementById("msg-profil").textContent="✅ Profil tersimpan.";toast("💾 Profil tersimpan.");}
   else document.getElementById("msg-profil").textContent="Isi nama atau email dulu.";
 }
 function resetApp(){if(confirm("Reset semua data aplikasi?")){localStorage.clear();location.reload();}}
 
-/* ================= TOAST ================= */
+/* ===== TOAST ===== */
 var toastTimer;
 function toast(msg){
   var t=document.getElementById("toast");t.textContent=msg;t.style.display="block";
   clearTimeout(toastTimer);toastTimer=setTimeout(function(){t.style.display="none";},2200);
 }
 
-/* ================= INIT ================= */
+/* ===== INIT ===== */
+muatData();
 tampilSaham("");
 tampilSinyal("Large Cap");
 document.getElementById("scr-cari").addEventListener("input",function(){tampilSaham(this.value);});
